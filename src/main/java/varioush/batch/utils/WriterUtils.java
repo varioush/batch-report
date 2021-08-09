@@ -1,4 +1,4 @@
-package com.fis.reliance.utils;
+package varioush.batch.utils;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -7,7 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import com.fis.reliance.constant.Constants;
+import varioush.batch.constant.Constants;
 
 public class WriterUtils {
 

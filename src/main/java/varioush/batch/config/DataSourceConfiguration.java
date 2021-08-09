@@ -1,4 +1,4 @@
-package com.fis.reliance.config;
+package varioush.batch.config;
 
 import javax.sql.DataSource;
 
@@ -9,9 +9,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
-import com.fis.reliance.constant.Constants;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+
+import varioush.batch.constant.Constants;
 
 @Configuration
 public class DataSourceConfiguration {

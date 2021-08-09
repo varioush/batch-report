@@ -1,4 +1,4 @@
-package com.fis.reliance.utils;
+package varioush.batch.utils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import com.fis.reliance.constant.Constants;
+import varioush.batch.constant.Constants;
 
 @Component
 public class EnvUtils {

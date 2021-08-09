@@ -1,4 +1,4 @@
-package com.fis.reliance.writer;
+package varioush.batch.writer;
 
 import java.util.List;
 
@@ -9,8 +9,8 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.fis.reliance.constant.Constants;
-import com.fis.reliance.utils.WriterUtils;
+import varioush.batch.constant.Constants;
+import varioush.batch.utils.WriterUtils;
 
 @Component
 @StepScope

@@ -1,4 +1,4 @@
-package com.fis.reliance.listener;
+package varioush.batch.listener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,10 +8,10 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fis.reliance.config.SFTPConfiguration.UploadGateway;
-import com.fis.reliance.constant.Constants;
-import com.fis.reliance.utils.EnvUtils;
-import com.fis.reliance.utils.WriterUtils;
+import varioush.batch.config.SFTPConfiguration.UploadGateway;
+import varioush.batch.constant.Constants;
+import varioush.batch.utils.EnvUtils;
+import varioush.batch.utils.WriterUtils;
 
 @Component
 public class InterceptingJobExecution implements JobExecutionListener {

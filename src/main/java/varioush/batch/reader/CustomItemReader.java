@@ -1,4 +1,4 @@
-package com.fis.reliance.reader;
+package varioush.batch.reader;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,8 +17,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.stereotype.Component;
 
-import com.fis.reliance.constant.Constants;
-import com.fis.reliance.utils.EnvUtils;
+import varioush.batch.constant.Constants;
+import varioush.batch.utils.EnvUtils;
 
 @Component
 @StepScope

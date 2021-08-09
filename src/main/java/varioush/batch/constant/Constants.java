@@ -1,4 +1,4 @@
-package com.fis.reliance.constant;
+package varioush.batch.constant;
 
 import java.util.regex.Pattern;
 

@@ -1,4 +1,4 @@
-package com.fis.reliance;
+package varioush.batch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,7 +8,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
-import com.fis.reliance.config.SchedulerConfiguration;
+import varioush.batch.config.SchedulerConfiguration;
 
 @SpringBootApplication
 

@@ -1,4 +1,4 @@
-package com.fis.reliance.listener;
+package varioush.batch.listener;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.ItemProcessListener;
 
-import com.fis.reliance.constant.Constants;
+import varioush.batch.constant.Constants;
 
 public class ItemCountsListener implements ItemProcessListener<Object, Object> {
 

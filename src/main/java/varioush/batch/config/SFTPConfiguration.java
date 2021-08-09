@@ -1,4 +1,4 @@
-package com.fis.reliance.config;
+package varioush.batch.config;
 
 import java.io.File;
 

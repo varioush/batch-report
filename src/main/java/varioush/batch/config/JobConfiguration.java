@@ -1,4 +1,4 @@
-package com.fis.reliance.config;
+package varioush.batch.config;
 
 import java.util.Map;
 
@@ -17,12 +17,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.fis.reliance.constant.Constants;
-import com.fis.reliance.listener.InterceptingJobExecution;
-import com.fis.reliance.processor.CustomItemProcessor;
-import com.fis.reliance.reader.CustomItemReader;
-import com.fis.reliance.utils.EnvUtils;
-import com.fis.reliance.writer.CustomItemWriter;
+import varioush.batch.constant.Constants;
+import varioush.batch.listener.InterceptingJobExecution;
+import varioush.batch.processor.CustomItemProcessor;
+import varioush.batch.reader.CustomItemReader;
+import varioush.batch.utils.EnvUtils;
+import varioush.batch.writer.CustomItemWriter;
 
 @Configuration
 @EnableBatchProcessing

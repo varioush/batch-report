@@ -1,4 +1,4 @@
-package com.fis.reliance.config;
+package varioush.batch.config;
 
 import java.util.Date;
 import java.util.List;
@@ -23,8 +23,8 @@ import org.springframework.scheduling.config.CronTask;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.CronTrigger;
 
-import com.fis.reliance.constant.Constants;
-import com.fis.reliance.utils.EnvUtils;
+import varioush.batch.constant.Constants;
+import varioush.batch.utils.EnvUtils;
 
 @Configuration
 @EnableScheduling
