@@ -23,4 +23,6 @@ The following guides illustrate how to use some features concretely:
 
 
 ### Running this application
-java -jar batch-report-**<version>**.jar --spring.config.location=file:///**<PATH>**/properties/application.properties,file:///**<PATH>**/properties/config.properties
+java -jar batch-report-**version**.jar --spring.config.location=file:///**path**/properties/application.properties,file:///**path**/properties/config.properties
+
+Change the version and path.
