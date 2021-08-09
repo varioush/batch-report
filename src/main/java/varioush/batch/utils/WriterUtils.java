@@ -22,17 +22,15 @@ public class WriterUtils {
 
 	public void writeNew(String filename, String content) {
 
-		File file = new File(".");
+		String path = getTempPath();
 
-		String path = file.getAbsolutePath() + File.separator + Constants.DIR_TEMP;
-
-		file = new File(path);
+		File file = new File(path);
 
 		if (!file.isDirectory()) {
 			file.mkdir();
 		}
 
-		path = path + File.separator + filename;
+		path = getPath(filename);
 
 		Path confFile = Paths.get(path);
 
@@ -53,9 +51,17 @@ public class WriterUtils {
 
 	}
 
+	private String getTempPath() {
+
+		File file = new File(Constants.CHAR_DOT);
+
+		return String.join(File.separator, file.getAbsolutePath(), Constants.DIR_TEMP);
+
+	}
+
 	public void write(String filename, String content) {
 		try {
-			
+
 			write(getPath(filename), true, content);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -65,16 +71,15 @@ public class WriterUtils {
 	}
 
 	public String getPath(String filename) {
+		
+		File file = new File(Constants.CHAR_DOT);
 
-		File file = new File(".");
-
-		return  file.getAbsolutePath() + File.separator + Constants.DIR_TEMP + File.separator
-				+ filename;
+		return String.join(File.separator, file.getAbsolutePath(), Constants.DIR_TEMP,filename);
 
 	}
 
 	public File getFile(String filename) {
-		// TODO Auto-generated method stub
+
 		return new File(getPath(filename));
 	}
 
