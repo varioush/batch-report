@@ -21,3 +21,6 @@ The following guides illustrate how to use some features concretely:
 * [Accessing Relational Data using JDBC with Spring](https://spring.io/guides/gs/relational-data-access/)
 * [Managing Transactions](https://spring.io/guides/gs/managing-transactions/)
 
+
+### Running this application
+java -jar batch-report-**<version>**.jar --spring.config.location=file:///**<PATH>**/properties/application.properties,file:///**<PATH>**/properties/config.properties
