@@ -10,10 +10,10 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.fis.reliance</groupId>
-	<artifactId>batv</artifactId>
+	<artifactId>batch-report</artifactId>
 	<version>1.0</version>
 	<name>batv</name>
-	<description>First Batch</description>
+	<description>Batch Report</description>
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
