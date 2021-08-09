@@ -12,13 +12,13 @@ import varioush.batch.config.SchedulerConfiguration;
 
 @SpringBootApplication
 
-public class BatvApplication implements CommandLineRunner {
+public class ReportBatchApplication implements CommandLineRunner {
 
-	private static final Logger logger = LoggerFactory.getLogger(BatvApplication.class);
+	private static final Logger logger = LoggerFactory.getLogger(ReportBatchApplication.class);
 
 	public static void main(String[] args) {
 		logger.info("Application Starting");
-		SpringApplication.run(BatvApplication.class, args);
+		SpringApplication.run(ReportBatchApplication.class, args);
 	}
 
 	
