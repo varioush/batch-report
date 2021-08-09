@@ -12,7 +12,7 @@
 	<groupId>com.fis.reliance</groupId>
 	<artifactId>batch-report</artifactId>
 	<version>1.0</version>
-	<name>batv</name>
+	<name>batch-txt-report</name>
 	<description>Batch Report</description>
 	<properties>
 		<java.version>1.8</java.version>
