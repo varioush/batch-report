@@ -40,7 +40,7 @@ public class EnvUtils {
 	}
 
 	public String format(String expression) {
-		Matcher m = Constants.pattern.matcher(expression);
+		Matcher m = Constants.Z_PATTERN.matcher(expression);
 
 		if (m.find()) {
 			String format = m.group(2);
