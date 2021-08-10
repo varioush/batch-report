@@ -22,7 +22,4 @@ The following guides illustrate how to use some features concretely:
 * [Managing Transactions](https://spring.io/guides/gs/managing-transactions/)
 
 
-### Running this application
-java -jar batch-report-**version**.jar --spring.config.location=file:///**path**/properties/application.properties,file:///**path**/properties/config.properties
 
-Change the version and path.
