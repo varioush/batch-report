@@ -26,10 +26,10 @@ import com.fis.reliance.writer.CustomItemWriter;
 
 @Configuration
 @EnableBatchProcessing
-public class BatchConfiguration {
+public class JobConfiguration {
 
 	@SuppressWarnings(Constants.UNUSED)
-	private static final Logger logger = LoggerFactory.getLogger(BatchConfiguration.class);
+	private static final Logger logger = LoggerFactory.getLogger(JobConfiguration.class);
 
 	
 	@Autowired
