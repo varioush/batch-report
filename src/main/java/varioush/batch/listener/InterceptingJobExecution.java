@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 
 import varioush.batch.config.SFTPConfiguration.UploadGateway;
 import varioush.batch.constant.Constants;
-import varioush.batch.utils.EnvUtils;
-import varioush.batch.utils.WriterUtils;
+import varioush.batch.utils.EnvironmentSource;
+import varioush.batch.utils.Functions;
 
 @Component
 public class InterceptingJobExecution implements JobExecutionListener {
@@ -22,7 +22,7 @@ public class InterceptingJobExecution implements JobExecutionListener {
 	private UploadGateway gateway;
 
 	@Autowired
-	private EnvUtils env;
+	private EnvironmentSource source;
 
 	@Override
 	public void beforeJob(JobExecution jobExecution) {
@@ -35,11 +35,11 @@ public class InterceptingJobExecution implements JobExecutionListener {
 
 		logger.info("@BeforeJob : Subject:{}, File Name :{}", subject, filename);
 
-		String header = env.get(subject, Constants.LABEL_HEADER);
+		String header = source.get(subject, Constants.LABEL_HEADER);
 
-		header = env.format(header);
+		header = source.format(header);
 
-		new WriterUtils().writeNew(filename, header);
+		Functions.createAndWrite(filename, header);
 
 		logger.info("Finishing Intercepting Job Excution - Before Job!");
 	}
@@ -60,15 +60,15 @@ public class InterceptingJobExecution implements JobExecutionListener {
 
 		logger.info("@AfterJob : Subject:{}, File Name :{}", subject, filename);
 
-		String footer = env.get(subject, Constants.LABEL_FOOTER);
+		String footer = source.get(subject, Constants.LABEL_FOOTER);
 
 		footer = footer.replace(Constants.EXP_COUNT, Integer.toString(noOfItemsProcessed));
 
-		new WriterUtils().write(filename, footer);
+		Functions.write(filename, footer);
 
 		logger.info("Initializing Uploading to SFTP!, FileName is {}", filename);
 
-		gateway.upload(new WriterUtils().getFile(filename));
+		gateway.upload(Functions.getFile(filename));
 
 		logger.info("Successfully Uploaded to SFTP!, FileName is {}", filename);
 

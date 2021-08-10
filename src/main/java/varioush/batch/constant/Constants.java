@@ -93,6 +93,8 @@ public class Constants {
 	public static final String TOPIC_BUSINESS = "business";
 
 	public static final String TOPIC_PRINCIPAL = "principal";
+	
+	public static final String DAY_RETAIN= "temp.retain.day";
 
 	public static final String UNUSED = "unused";
 	

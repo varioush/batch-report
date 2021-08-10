@@ -18,7 +18,7 @@ import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.stereotype.Component;
 
 import varioush.batch.constant.Constants;
-import varioush.batch.utils.EnvUtils;
+import varioush.batch.utils.EnvironmentSource;
 
 @Component
 @StepScope
@@ -36,7 +36,7 @@ public class CustomItemReader {
 	String subject;
 	
 	@Autowired
-	EnvUtils env;
+	EnvironmentSource source;
 
 	public JdbcPagingItemReader<Map<String, Object>> read() {
 
@@ -44,7 +44,7 @@ public class CustomItemReader {
 		JdbcPagingItemReader<Map<String, Object>> pagingItemReader = new JdbcPagingItemReader<>();
 		pagingItemReader.setDataSource(dataSource);
 
-		pagingItemReader.setFetchSize(env.get(Constants.LABEL_FETCH_SIZE, Integer.class));
+		pagingItemReader.setFetchSize(source.get(Constants.LABEL_FETCH_SIZE, Integer.class));
 		pagingItemReader.setRowMapper(new ColumnMapRowMapper());
 
 		try {
@@ -63,10 +63,10 @@ public class CustomItemReader {
 
 	
 		
-		String columns = env.get(subject, Constants.LABEL_COLUMNS);
-		String table = env.get(subject, Constants.LABEL_TABLE);
-		String sortColumn = env.get(subject, Constants.LABEL_SORT);
-		String whereClause = env.get(subject, Constants.LABEL_WHERE);
+		String columns = source.get(subject, Constants.LABEL_COLUMNS);
+		String table = source.get(subject, Constants.LABEL_TABLE);
+		String sortColumn = source.get(subject, Constants.LABEL_SORT);
+		String whereClause = source.get(subject, Constants.LABEL_WHERE);
 
 		final Map<String, Order> sortKeys = new HashMap<>();
 		sortKeys.put(sortColumn, Order.ASCENDING);

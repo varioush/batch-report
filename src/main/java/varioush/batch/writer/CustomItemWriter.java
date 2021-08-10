@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import varioush.batch.constant.Constants;
-import varioush.batch.utils.WriterUtils;
+import varioush.batch.utils.Functions;
 
 @Component
 @StepScope
@@ -36,7 +36,7 @@ public class CustomItemWriter implements ItemWriter<String> {
 				delimeter = newLine;
 
 			}
-			new WriterUtils().write(filename, content);
+			Functions.write(filename, content);
 		}
 		
 		logger.info("Writing is in progress end!!!, filename:{}", filename);

@@ -12,10 +12,10 @@ import org.springframework.stereotype.Component;
 import varioush.batch.constant.Constants;
 
 @Component
-public class EnvUtils {
+public class EnvironmentSource {
 
 	@Autowired
-	Environment env;
+	Environment source;
 
 	public String getAndFormat(String subject, String label) {
 
@@ -31,12 +31,12 @@ public class EnvUtils {
 
 	public <T> T get(String key, Class<T> clazz) {
 
-		return env.getProperty(key, clazz);
+		return source.getProperty(key, clazz);
 	}
 
 	public String get(String key) {
 
-		return env.getProperty(key);
+		return source.getProperty(key);
 	}
 
 	public String format(String expression) {

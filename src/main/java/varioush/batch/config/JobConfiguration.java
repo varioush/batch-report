@@ -21,7 +21,7 @@ import varioush.batch.constant.Constants;
 import varioush.batch.listener.InterceptingJobExecution;
 import varioush.batch.processor.CustomItemProcessor;
 import varioush.batch.reader.CustomItemReader;
-import varioush.batch.utils.EnvUtils;
+import varioush.batch.utils.EnvironmentSource;
 import varioush.batch.writer.CustomItemWriter;
 
 @Configuration
@@ -49,7 +49,7 @@ public class JobConfiguration {
 	private CustomItemProcessor customItemProcessor;
 
 	@Autowired
-	private EnvUtils env;
+	private EnvironmentSource source;
 
 	@StepScope
 	@Bean(Constants.BEAN_READER_JOB)
@@ -70,7 +70,7 @@ public class JobConfiguration {
 	public Step businessReaderStep(
 			@Autowired @Qualifier(Constants.BEAN_READER_JOB) JdbcPagingItemReader<Map<String, Object>> reader) {
 		return stepBuilderFactory.get(Constants.BEAN_READER_STEP)
-				.<Map<String, Object>, String>chunk(Integer.parseInt(env.get(Constants.LABEL_FETCH_SIZE)))
+				.<Map<String, Object>, String>chunk(Integer.parseInt(source.get(Constants.LABEL_FETCH_SIZE)))
 				.reader(reader).writer(customItemWriter).processor(customItemProcessor).build();
 	}
 

@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import varioush.batch.constant.Constants;
-import varioush.batch.utils.EnvUtils;
+import varioush.batch.utils.EnvironmentSource;
 
 @Component
 @StepScope
@@ -25,21 +25,21 @@ public class CustomItemProcessor implements ItemProcessor<Map<String, Object>, S
 	String subject;
 
 	@Autowired
-	EnvUtils env;
+	EnvironmentSource source;
 
 	@Override
 	public String process(Map<String, Object> item) throws Exception {
 		// no logger used to avoid over-logging
 		
-		String columns = env.get(subject, Constants.LABEL_COLUMNS);
-		String prefix = env.get(subject,Constants.LABEL_PREFIX);
-		String postfix = env.get(subject,Constants.LABEL_POSTFIX);
+		String columns = source.get(subject, Constants.LABEL_COLUMNS);
+		String prefix = source.get(subject,Constants.LABEL_PREFIX);
+		String postfix = source.get(subject,Constants.LABEL_POSTFIX);
 
 		String[] columnArray = Arrays.stream(columns.split(Constants.CHAR_COMMA)).map(String::trim).toArray(String[]::new);
 
 		String content = Constants.CHAR_BLANK;
 
-		String delimiter = env.get(env.get(subject, Constants.DELIMITER));
+		String delimiter = source.get(source.get(subject, Constants.DELIMITER));
 
 		if (prefix != null) {
 			content = content.concat(prefix);

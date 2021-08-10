@@ -24,7 +24,7 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.CronTrigger;
 
 import varioush.batch.constant.Constants;
-import varioush.batch.utils.EnvUtils;
+import varioush.batch.utils.EnvironmentSource;
 
 @Configuration
 @EnableScheduling
@@ -46,7 +46,7 @@ public class SchedulerConfiguration implements SchedulingConfigurer {
 	private int executorThreadPoolSize;
 
 	@Autowired
-	EnvUtils env;
+	EnvironmentSource source;
 
 	List<CronTask> cronTasks;
 
@@ -61,7 +61,7 @@ public class SchedulerConfiguration implements SchedulingConfigurer {
 	public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
 		// "Calls scheduleTasks() at bean construction time" - docs
 
-		String listOfSubjects = env.get(Constants.LABEL_SUBJECT_LIST);
+		String listOfSubjects = source.get(Constants.LABEL_SUBJECT_LIST);
 
 		String[] subjects = listOfSubjects.split(Constants.CHAR_COMMA);
 
@@ -78,7 +78,7 @@ public class SchedulerConfiguration implements SchedulingConfigurer {
 						logger.warn("cannot execute reportJob");
 					}
 				}
-			}, env.get(env.get(subject, Constants.LABEL_CRON)));
+			}, source.get(source.get(subject, Constants.LABEL_CRON)));
 
 			taskRegistrar.addCronTask(ct);
 		}
@@ -90,7 +90,7 @@ public class SchedulerConfiguration implements SchedulingConfigurer {
 	}
 
 	private JobParameters jobParameters(String subject) {
-		String filename = env.getAndFormat(subject, Constants.LABEL_FILENAME);
+		String filename = source.getAndFormat(subject, Constants.LABEL_FILENAME);
 		logger.info("Subject:{}, File Name is :{}", subject, filename);
 		return new JobParametersBuilder().addLong(Constants.LABEL_DATE, new Date().getTime())
 				.addString(Constants.LABEL_FILENAME, filename).addString(Constants.LABEL_SUBJECT, subject)
