@@ -8,7 +8,7 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fis.reliance.config.SftpConfig.UploadGateway;
+import com.fis.reliance.config.SftpConfiguration.UploadGateway;
 import com.fis.reliance.constant.Constants;
 import com.fis.reliance.utils.EnvUtils;
 import com.fis.reliance.utils.WriterUtils;

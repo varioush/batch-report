@@ -14,9 +14,9 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
-public class DataSourceConfig {
+public class DataSourceConfiguration {
 
-	private static final Logger logger = LoggerFactory.getLogger(DataSourceConfig.class);
+	private static final Logger logger = LoggerFactory.getLogger(DataSourceConfiguration.class);
 
 	@Value("${spring.record.datasource.url}")
 	private String dbUrl;

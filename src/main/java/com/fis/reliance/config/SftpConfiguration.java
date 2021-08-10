@@ -23,9 +23,9 @@ import org.springframework.messaging.MessageHandler;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
 
 @Configuration
-public class SftpConfig {
+public class SftpConfiguration {
 
-	private static final Logger logger = LoggerFactory.getLogger(SftpConfig.class);
+	private static final Logger logger = LoggerFactory.getLogger(SftpConfiguration.class);
 	
     @Value("${sftp.host}")
     private String sftpHost;

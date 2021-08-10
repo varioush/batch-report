@@ -28,9 +28,9 @@ import com.fis.reliance.utils.EnvUtils;
 
 @Configuration
 @EnableScheduling
-public class SchedulerConfig implements SchedulingConfigurer {
+public class SchedulerConfiguration implements SchedulingConfigurer {
 
-	private static final Logger logger = LoggerFactory.getLogger(SchedulerConfig.class);
+	private static final Logger logger = LoggerFactory.getLogger(SchedulerConfiguration.class);
 
 	@Bean
 	public Executor taskExecutor() {

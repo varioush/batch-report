@@ -8,7 +8,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
-import com.fis.reliance.config.SchedulerConfig;
+import com.fis.reliance.config.SchedulerConfiguration;
 
 @SpringBootApplication
 
@@ -23,7 +23,7 @@ public class BatvApplication implements CommandLineRunner {
 
 	
 	@Autowired
-	SchedulerConfig scheduler;
+	SchedulerConfiguration scheduler;
 	
 
 	@Override
