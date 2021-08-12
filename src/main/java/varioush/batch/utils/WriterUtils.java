@@ -11,6 +11,8 @@ import varioush.batch.constant.Constants;
 
 public class WriterUtils {
 
+	private static final String TEMP_DIR = Constants.CHAR_DOT + File.separator + Constants.DIR_TEMP;
+
 	public void write(String filename, boolean isAppend, String content) throws Exception {
 		FileWriter fw = new FileWriter(filename, isAppend);
 		BufferedWriter bw = new BufferedWriter(fw);
@@ -22,15 +24,13 @@ public class WriterUtils {
 
 	public void writeNew(String filename, String content) {
 
-		String path = getTempPath();
-
-		File file = new File(path);
+		File file = new File(TEMP_DIR);
 
 		if (!file.isDirectory()) {
-			file.mkdir();
+			file.mkdirs();
 		}
 
-		path = getPath(filename);
+		String path = path(filename);
 
 		Path confFile = Paths.get(path);
 
@@ -51,18 +51,10 @@ public class WriterUtils {
 
 	}
 
-	private String getTempPath() {
-
-		File file = new File(Constants.CHAR_DOT);
-
-		return String.join(File.separator, file.getAbsolutePath(), Constants.DIR_TEMP);
-
-	}
-
 	public void write(String filename, String content) {
 		try {
-
-			write(getPath(filename), true, content);
+			String path = path(filename);
+			write(path, true, content);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("Unable to write file, filename:" + filename);
@@ -70,17 +62,14 @@ public class WriterUtils {
 
 	}
 
-	public String getPath(String filename) {
-		
-		File file = new File(Constants.CHAR_DOT);
-
-		return String.join(File.separator, file.getAbsolutePath(), Constants.DIR_TEMP,filename);
-
-	}
-
 	public File getFile(String filename) {
 
-		return new File(getPath(filename));
+		return new File(path(filename));
+	}
+
+	private String path(String filename) {
+
+		return String.join(File.separator, Constants.DIR_TEMP, filename);
 	}
 
 }

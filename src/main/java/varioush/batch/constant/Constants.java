@@ -30,7 +30,7 @@ public class Constants {
 
 	public static final String DELIMITER = "delimiter";
 
-	public static final String DIR_TEMP = "reporttemp";
+	public static final String DIR_TEMP = "TEMP_DIR";
 
 	public static final String EXP_COUNT = "%COUNT%";
 
