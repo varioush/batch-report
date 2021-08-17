@@ -1,10 +1,5 @@
 package varioush.batch.utils;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.regex.Matcher;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -21,7 +16,7 @@ public class EnvironmentSource {
 
 		String value = get(subject, label);
 
-		return format(value);
+		return ExprEvaluator.process(value);
 	}
 
 	public String get(String subject, String label) {
@@ -40,17 +35,8 @@ public class EnvironmentSource {
 	}
 
 	public String format(String expression) {
-		Matcher m = Constants.Z_PATTERN.matcher(expression);
-
-		if (m.find()) {
-			String format = m.group(2);
-			DateFormat formatter = new SimpleDateFormat(format);
-			return expression.replace(m.group(0),
-					formatter.format(new Date(new Date().getTime() - Constants.MILLIS_IN_A_DAY)));
-		}
-
-		throw new RuntimeException();
-
+		
+		return ExprEvaluator.process(expression);
 	}
 
 }

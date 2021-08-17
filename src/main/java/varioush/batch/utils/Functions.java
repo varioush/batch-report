@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import varioush.batch.constant.Constants;
+import varioush.batch.constant.Constants.FOLDER;
 
 public class Functions {
 
@@ -24,26 +25,24 @@ public class Functions {
 
 	public static void createAndWrite(String filename, String content) {
 
-		File file = new File(TEMP_DIR);
 
-		if (!file.isDirectory()) {
-			file.mkdirs();
-		}
 
-		String path = path(filename);
+		
 
-		Path confFile = Paths.get(path);
+		Path confFile = Paths.get(filename);
 
 		try {
 			if (Files.notExists(confFile)) {
 				try {
+					
+					Files.createDirectory(confFile.getParent());
 					Files.createFile(confFile);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 
-			write(path, false, content);
+			write(filename, false, content);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("Unable to write file, filename:" + filename);
@@ -53,7 +52,7 @@ public class Functions {
 
 	public static void write(String filename, String content) {
 		try {
-			String path = path(filename);
+			String path = filename;
 			write(path, true, content);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -62,14 +61,15 @@ public class Functions {
 
 	}
 
-	public static File getFile(String filename) {
-
-		return new File(path(filename));
-	}
-
-	private static String path(String filename) {
+	
+	public static String path(String filename) {
 
 		return String.join(File.separator, Constants.DIR_TEMP, filename);
+	}
+	
+	public static String path(FOLDER path) {
+
+		return String.join(File.separator, Constants.DIR_TEMP, path.name());
 	}
 
 	public static void deleteFilesOlderThanNdays(int daysBack) {
@@ -88,5 +88,10 @@ public class Functions {
 				}
 			}
 		}
+	}
+
+	public static String getPath(FOLDER folder) {
+		
+		return path(folder.name())+File.separator;
 	}
 }

@@ -32,7 +32,7 @@ public class Constants {
 
 	public static final String DIR_TEMP = "TEMP_DIR";
 
-	public static final String EXP_COUNT = "%COUNT%";
+	public static final String EXP_COUNT = "{N}";
 
 	public static final String INTERVAL_DAILY = "daily";
 
@@ -76,8 +76,6 @@ public class Constants {
 
 	public static final String LABEL_WHERE = "where";
 
-	public static final long MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;
-
 	public static final String NAME_BATCH_DB = "BATCH-DATABASE";
 
 	public static final String NAME_REPORT_DB = "REPORT-DATABASE";
@@ -100,4 +98,13 @@ public class Constants {
 	
 	public static final Pattern Z_PATTERN = Pattern.compile(REG_DATE);
 
+	public static final String LABEL_FTP_PATH = "ftpPath";
+	
+	public enum FOLDER
+	{
+		INITIATED, PENDING, DONE
+	}
 }
+
+
+

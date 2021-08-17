@@ -25,6 +25,7 @@ import org.springframework.scheduling.support.CronTrigger;
 
 import varioush.batch.constant.Constants;
 import varioush.batch.utils.EnvironmentSource;
+import varioush.batch.utils.Functions;
 
 @Configuration
 @EnableScheduling
@@ -90,10 +91,12 @@ public class SchedulerConfiguration implements SchedulingConfigurer {
 	}
 
 	private JobParameters jobParameters(String subject) {
-		String filename = source.getAndFormat(subject, Constants.LABEL_FILENAME);
+		String ftpPath=source.getAndFormat(subject, Constants.LABEL_FILENAME);
+		String filename = Functions.getPath(Constants.FOLDER.INITIATED)+ftpPath;
 		logger.info("Subject:{}, File Name is :{}", subject, filename);
 		return new JobParametersBuilder().addLong(Constants.LABEL_DATE, new Date().getTime())
 				.addString(Constants.LABEL_FILENAME, filename).addString(Constants.LABEL_SUBJECT, subject)
+				.addString(Constants.LABEL_FTP_PATH, ftpPath)
 				.toJobParameters();
 
 	}
