@@ -28,12 +28,11 @@ public class CustomItemWriter implements ItemWriter<String> {
 
 		if (items != null) {
 			String content = Constants.CHAR.BLANK;
-			String newLine = Constants.OTHER.NEW_LINE;
-			String delimeter = Constants.OTHER.NEW_LINE;
+
+			
 			for (Object item : items) {
 
-				content = content.concat(delimeter).concat(item.toString());
-				delimeter = newLine;
+				content = content.concat(Constants.OTHER.NEW_LINE).concat(item.toString());
 
 			}
 			Writer writer = new Writer();

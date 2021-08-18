@@ -48,7 +48,6 @@ public class InterceptingJobExecution implements JobExecutionListener {
 
 		Writer writer = new Writer();
 		writer.file(filename).content(content).build();
-				//.createAndWrite(filename, header);
 
 		logger.info("Finishing Intercepting Job Excution - Before Job!");
 	}

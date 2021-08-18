@@ -50,13 +50,12 @@ public class CustomItemReader {
 		try {
 			pagingItemReader.setQueryProvider(queryProvider().getObject());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		logger.info("Reading is in progress end!!!, Subject:{}, filename:{}", subject, filename);
 		return pagingItemReader;
 
-		// return null;
+		
 	}
 
 	public SqlPagingQueryProviderFactoryBean queryProvider() {
