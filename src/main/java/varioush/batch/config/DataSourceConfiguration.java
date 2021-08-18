@@ -37,30 +37,30 @@ public class DataSourceConfiguration {
 	@Value("${spring.batch.datasource.password}")
 	private String batchPwd;
 
-	@Bean(name = Constants.DATASOURCE_REPORT, destroyMethod = Constants.LABEL_CLOSE)
+	@Bean(name = Constants.DATASOURCE.REPORT, destroyMethod = Constants.LABEL.CLOSE)
 	public DataSource getDataSource() {
 		
-		logger.info("Initializing {} database", Constants.NAME_REPORT_DB);
+		logger.info("Initializing {} database", Constants.NAME.REPORT_DB);
 		HikariConfig config = new HikariConfig();
-		config.setPoolName(Constants.NAME_REPORT_DB);
+		config.setPoolName(Constants.NAME.REPORT_DB);
 		config.setMaximumPoolSize(10);
 		
 		config.setDriverClassName(dbDriverClass);
 		config.setJdbcUrl(dbUrl);
 		config.setUsername(dbUser);
 		config.setPassword(dbPwd);
-		logger.info("Finished initialization of{} database", Constants.NAME_REPORT_DB);
+		logger.info("Finished initialization of{} database", Constants.NAME.REPORT_DB);
 		return new HikariDataSource(config);
 	}
 	
 	
 	@Primary
-	@Bean(name = Constants.DATASOURCE_BATCH, destroyMethod = Constants.LABEL_CLOSE)
+	@Bean(name = Constants.DATASOURCE.BATCH, destroyMethod = Constants.LABEL.CLOSE)
 	public DataSource batchDataSource() {
 		
-		logger.info("Initializing {} database", Constants.NAME_BATCH_DB);
+		logger.info("Initializing {} database", Constants.NAME.BATCH_DB);
 		HikariConfig config = new HikariConfig();
-		config.setPoolName(Constants.NAME_BATCH_DB);
+		config.setPoolName(Constants.NAME.BATCH_DB);
 		
 		config.setMaximumPoolSize(10);
 		
@@ -69,7 +69,7 @@ public class DataSourceConfiguration {
 		config.setUsername(batchUser);
 		config.setPassword(batchPwd);
 		
-		logger.info("Finished initialization of {} database", Constants.NAME_BATCH_DB);
+		logger.info("Finished initialization of {} database", Constants.NAME.BATCH_DB);
 		return new HikariDataSource(config);
 	}
 	

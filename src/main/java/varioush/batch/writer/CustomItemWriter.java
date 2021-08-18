@@ -18,7 +18,7 @@ public class CustomItemWriter implements ItemWriter<String> {
 
 	private static final Logger logger = LoggerFactory.getLogger(CustomItemWriter.class);
 
-	@Value(Constants.JOB_PARAM_FILENAME)
+	@Value(Constants.JOB_DEF.JOB_PARAM_FILENAME)
 	String filename;
 
 	@Override
@@ -27,9 +27,9 @@ public class CustomItemWriter implements ItemWriter<String> {
 		logger.info("Writing is in progress start!!!, filename:{}", filename);
 
 		if (items != null) {
-			String content = Constants.CHAR_BLANK;
-			String newLine = Constants.NEW_LINE;
-			String delimeter = Constants.NEW_LINE;
+			String content = Constants.CHAR.BLANK;
+			String newLine = Constants.OTHER.NEW_LINE;
+			String delimeter = Constants.OTHER.NEW_LINE;
 			for (Object item : items) {
 
 				content = content.concat(delimeter).concat(item.toString());

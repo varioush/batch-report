@@ -12,7 +12,7 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import varioush.batch.config.SchedulerConfiguration;
 import varioush.batch.constant.Constants;
 import varioush.batch.utils.EnvironmentSource;
-import varioush.batch.utils.Functions;
+import varioush.batch.utils.FileFunctions;
 
 @SpringBootApplication
 
@@ -37,13 +37,13 @@ public class ReportBatchApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		
 		
-		Functions.builtDirectoryStructure();
+		FileFunctions.builtDirectoryStructure();
 		
 		
 		try
 		{
 			
-			String retainDay = source.get(Constants.DAY_RETAIN);
+			String retainDay = source.get(Constants.LABEL.DAY_RETAIN);
 			Long days = 40l;
 			try
 			{
@@ -60,11 +60,11 @@ public class ReportBatchApplication implements CommandLineRunner {
 				
 				logger.warn("Removing stale record older than {} days", days);
 			}
-			Functions.deleteFilesOlderThanNdays(days);
+			FileFunctions.deleteFilesOlderThanNdays(days);
 		}
 		catch(Exception ex)
 		{
-			logger.warn("Nothing to worries!! Delete {} yourself", Constants.DIR_TEMP);
+			logger.warn("Nothing to worries!! Delete {} yourself", Constants.OTHER.DIR_TEMP);
 		}
 		
 		ScheduledTaskRegistrar taskRegistrar = new ScheduledTaskRegistrar();

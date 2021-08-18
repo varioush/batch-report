@@ -12,16 +12,16 @@ import org.slf4j.LoggerFactory;
 import varioush.batch.constant.Constants;
 import varioush.batch.constant.Constants.FOLDER;
 
-public class Functions {
+public class FileFunctions {
 
-	private static final Logger logger = LoggerFactory.getLogger(Functions.class);
+	private static final Logger logger = LoggerFactory.getLogger(FileFunctions.class);
 
 	public static void createFileAndDirectory(Path path) {
 
 		if (Files.notExists(path)) {
 			try {
 				try {
-					createDirectory(path.getParent());
+					Files.createDirectories(path.getParent());
 				} catch (Exception ex) {
 
 				}
@@ -33,13 +33,7 @@ public class Functions {
 
 	}
 
-	public static void createDirectory(Path path) {
-		try {
-			Files.createDirectories(path);
-		} catch (Exception ex) {
-
-		}
-	}
+	
 
 	public static void deleteFilesOlderThanNdays(long daysBack) {
 
@@ -75,8 +69,8 @@ public class Functions {
 
 	public static Path getPath(String name) {
 
-		Path currentDir = Paths.get(Constants.CHAR_BLANK);
-		Path one = currentDir.resolve(Constants.DIR_TEMP);
+		Path currentDir = Paths.get(Constants.CHAR.BLANK);
+		Path one = currentDir.resolve(Constants.OTHER.DIR_TEMP);
 		return one.resolve(name);
 
 	}

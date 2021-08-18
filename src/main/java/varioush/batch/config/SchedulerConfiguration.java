@@ -38,7 +38,7 @@ import org.springframework.scheduling.support.CronTrigger;
 import varioush.batch.config.SFTPConfiguration.UploadGateway;
 import varioush.batch.constant.Constants;
 import varioush.batch.utils.EnvironmentSource;
-import varioush.batch.utils.Functions;
+import varioush.batch.utils.FileFunctions;
 
 @Configuration
 @EnableScheduling
@@ -68,7 +68,7 @@ public class SchedulerConfiguration implements SchedulingConfigurer {
 	JobLauncher launcher;
 
 	@Autowired
-	@Qualifier(Constants.JOB_BEAN_EXPORT)
+	@Qualifier(Constants.JOB_DEF.JOB_BEAN_EXPORT)
 	Job ebdJob;
 
 	@Value("${sftp.remote.directory:/}")
@@ -81,9 +81,9 @@ public class SchedulerConfiguration implements SchedulingConfigurer {
 	public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
 		// "Calls scheduleTasks() at bean construction time" - docs
 
-		String listOfSubjects = source.get(Constants.LABEL_SUBJECT_LIST);
+		String listOfSubjects = source.get(Constants.LABEL.SUBJECT_LIST);
 
-		String[] subjects = listOfSubjects.split(Constants.CHAR_COMMA);
+		String[] subjects = listOfSubjects.split(Constants.CHAR.COMMA);
 
 		for (String subject : subjects) {
 
@@ -98,7 +98,7 @@ public class SchedulerConfiguration implements SchedulingConfigurer {
 						logger.warn("cannot execute reportJob");
 					}
 				}
-			}, source.get(source.get(subject, Constants.LABEL_CRON)));
+			}, source.get(source.get(subject, Constants.LABEL.CRON)));
 
 			taskRegistrar.addCronTask(ct);
 		}
@@ -110,26 +110,26 @@ public class SchedulerConfiguration implements SchedulingConfigurer {
 	}
 
 	private JobParameters jobParameters(String subject) {
-		String ftpPath = source.getAndFormat(subject, Constants.LABEL_FILENAME);
+		String ftpPath = source.getAndFormat(subject, Constants.LABEL.FILENAME);
 		String filename = Paths
-				.get(Functions.getPath(Constants.FOLDER.INITIATED.name()).toAbsolutePath().toString(), ftpPath)
+				.get(FileFunctions.getPath(Constants.FOLDER.INITIATED.name()).toAbsolutePath().toString(), ftpPath)
 				.toAbsolutePath().toString();
 		logger.info("Subject:{}, File Name is :{}", subject, filename);
-		return new JobParametersBuilder().addLong(Constants.LABEL_DATE, new Date().getTime())
-				.addString(Constants.LABEL_FILENAME, filename).addString(Constants.LABEL_SUBJECT, subject)
-				.addString(Constants.LABEL_FTP_PATH, ftpPath).toJobParameters();
+		return new JobParametersBuilder().addLong(Constants.LABEL.DATE, new Date().getTime())
+				.addString(Constants.LABEL.FILENAME, filename).addString(Constants.LABEL.SUBJECT, subject)
+				.addString(Constants.LABEL.FTP_PATH, ftpPath).toJobParameters();
 
 	}
 
-	@Scheduled(cron = Constants.CRON_UPLOAD)
+	@Scheduled(cron = Constants.OTHER.CRON_UPLOAD)
 	public void scheduleUploadToSFtp() throws JobParametersInvalidException, JobExecutionAlreadyRunningException,
 			JobRestartException, JobInstanceAlreadyCompleteException, IOException {
 		
 		
 		logger.info("Processing SFTP Items");
 
-		Path path = Functions.getPath(Constants.FOLDER.PROCESSED.name());
-		Path completedPath = Functions.getPath(Constants.FOLDER.COMPLETED.name());
+		Path path = FileFunctions.getPath(Constants.FOLDER.PROCESSED.name());
+		Path completedPath = FileFunctions.getPath(Constants.FOLDER.COMPLETED.name());
 
 		if (Files.isDirectory(path)) {
 			try (Stream<Path> dirs = Files.list(path)) {

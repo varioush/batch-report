@@ -10,7 +10,7 @@ import varioush.batch.constant.Constants;
 
 public class ItemCountsListener implements ItemProcessListener<Object, Object> {
 
-	@SuppressWarnings(Constants.UNUSED)
+	@SuppressWarnings(Constants.OTHER.UNUSED)
 	private static final Logger logger = LoggerFactory.getLogger(ItemCountsListener.class);
 
 	

@@ -21,7 +21,7 @@ public class EnvironmentSource {
 
 	public String get(String subject, String label) {
 
-		return get(subject + Constants.CHAR_DOT + label);
+		return get(subject + Constants.CHAR.DOT + label);
 	}
 
 	public <T> T get(String key, Class<T> clazz) {

@@ -28,7 +28,7 @@ import varioush.batch.writer.CustomItemWriter;
 @EnableBatchProcessing
 public class JobConfiguration {
 
-	@SuppressWarnings(Constants.UNUSED)
+	@SuppressWarnings(Constants.OTHER.UNUSED)
 	private static final Logger logger = LoggerFactory.getLogger(JobConfiguration.class);
 
 	
@@ -52,25 +52,25 @@ public class JobConfiguration {
 	private EnvironmentSource source;
 
 	@StepScope
-	@Bean(Constants.BEAN_READER_JOB)
+	@Bean(Constants.JOB_DEF.READER_JOB)
 	public JdbcPagingItemReader<Map<String, Object>> customItemReader() {
 
 		return itemReader.read();
 	}
 
-	@Bean(name = Constants.JOB_BEAN_EXPORT)
-	public Job exportBusinessDailyDataJob(@Autowired @Qualifier(Constants.BEAN_READER_STEP) Step studentStep,
+	@Bean(name = Constants.JOB_DEF.JOB_BEAN_EXPORT)
+	public Job exportBusinessDailyDataJob(@Autowired @Qualifier(Constants.JOB_DEF.READER_STEP) Step studentStep,
 			@Autowired InterceptingJobExecution interceptingJob) {
 
-		return jobBuilderFactory.get(Constants.BEAN_JOB_IDENTIFIER).incrementer(new RunIdIncrementer())
+		return jobBuilderFactory.get(Constants.JOB_DEF.JOB_IDENTIFIER).incrementer(new RunIdIncrementer())
 				.flow(studentStep).end().listener(interceptingJob).build();// .listener(studentJobListener)
 	}
 
-	@Bean(Constants.BEAN_READER_STEP)
+	@Bean(Constants.JOB_DEF.READER_STEP)
 	public Step businessReaderStep(
-			@Autowired @Qualifier(Constants.BEAN_READER_JOB) JdbcPagingItemReader<Map<String, Object>> reader) {
-		return stepBuilderFactory.get(Constants.BEAN_READER_STEP)
-				.<Map<String, Object>, String>chunk(Integer.parseInt(source.get(Constants.LABEL_FETCH_SIZE)))
+			@Autowired @Qualifier(Constants.JOB_DEF.READER_JOB) JdbcPagingItemReader<Map<String, Object>> reader) {
+		return stepBuilderFactory.get(Constants.JOB_DEF.READER_STEP)
+				.<Map<String, Object>, String>chunk(Integer.parseInt(source.get(Constants.LABEL.FETCH_SIZE)))
 				.reader(reader).writer(customItemWriter).processor(customItemProcessor).build();
 	}
 

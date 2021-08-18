@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 import varioush.batch.constant.Constants;
 import varioush.batch.constant.Constants.FOLDER;
 import varioush.batch.utils.EnvironmentSource;
-import varioush.batch.utils.Functions;
+import varioush.batch.utils.FileFunctions;
 import varioush.batch.utils.Writer;
 
 @Component
@@ -36,13 +36,13 @@ public class InterceptingJobExecution implements JobExecutionListener {
 
 		logger.info("Before initializing job ");
 
-		String filename = jobExecution.getJobParameters().getString(Constants.LABEL_FILENAME);
+		String filename = jobExecution.getJobParameters().getString(Constants.LABEL.FILENAME);
 
-		String subject = jobExecution.getJobParameters().getString(Constants.LABEL_SUBJECT);
+		String subject = jobExecution.getJobParameters().getString(Constants.LABEL.SUBJECT);
 
 		logger.info("@BeforeJob : Subject:{}, File Name :{}", subject, filename);
 
-		String content = source.get(subject, Constants.LABEL_HEADER);
+		String content = source.get(subject, Constants.LABEL.HEADER);
 
 		content = source.format(content);
 
@@ -62,17 +62,17 @@ public class InterceptingJobExecution implements JobExecutionListener {
 		for (StepExecution stepExecution : jobExecution.getStepExecutions()) {
 			noOfItemsProcessed += stepExecution.getWriteCount();
 		}
-		String ftpPath = jobExecution.getJobParameters().getString(Constants.LABEL_FTP_PATH);
+		String ftpPath = jobExecution.getJobParameters().getString(Constants.LABEL.FTP_PATH);
 
-		String filename = jobExecution.getJobParameters().getString(Constants.LABEL_FILENAME);
+		String filename = jobExecution.getJobParameters().getString(Constants.LABEL.FILENAME);
 
-		String subject = jobExecution.getJobParameters().getString(Constants.LABEL_SUBJECT);
+		String subject = jobExecution.getJobParameters().getString(Constants.LABEL.SUBJECT);
 
 		logger.info("@AfterJob : Subject:{}, File Name :{}", subject, filename);
 
-		String content = Constants.NEW_LINE + source.get(subject, Constants.LABEL_FOOTER);
+		String content = Constants.OTHER.NEW_LINE + source.get(subject, Constants.LABEL.FOOTER);
 
-		content = content.replace(Constants.EXP_COUNT, Integer.toString(noOfItemsProcessed));
+		content = content.replace(Constants.OTHER.EXP_COUNT, Integer.toString(noOfItemsProcessed));
 
 		Writer writer = new Writer();
 		
@@ -83,11 +83,11 @@ public class InterceptingJobExecution implements JobExecutionListener {
 
 		try
 		{
-			Path path = Functions.getPath(FOLDER.PROCESSED.name());
+			Path path = FileFunctions.getPath(FOLDER.PROCESSED.name());
 			
 			Path dirPath  = Paths.get(path.toAbsolutePath().toString(), parentPath);
 			
-			Functions.createDirectory(dirPath);
+			Files.createDirectories(dirPath);
 			
 			Path source =Paths.get(filename); 
 			Path dest = Paths.get(path.toAbsolutePath().toString(),ftpPath);

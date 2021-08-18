@@ -28,7 +28,7 @@ public class Writer {
 
 		try {
 			if (!Files.exists(path)) {
-				Functions.createFileAndDirectory(path);
+				FileFunctions.createFileAndDirectory(path);
 			}
 			write();
 		} catch (Exception e) {

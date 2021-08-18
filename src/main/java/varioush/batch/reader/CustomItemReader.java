@@ -27,12 +27,12 @@ public class CustomItemReader {
 	private static final Logger logger = LoggerFactory.getLogger(CustomItemReader.class);
 
 	@Autowired
-	@Qualifier(Constants.DATASOURCE_REPORT)
+	@Qualifier(Constants.DATASOURCE.REPORT)
 	private DataSource dataSource;
 
-	@Value(Constants.JOB_PARAM_FILENAME)
+	@Value(Constants.JOB_DEF.JOB_PARAM_FILENAME)
 	String filename;
-	@Value(Constants.JOB_PARAM_SUBJECT)
+	@Value(Constants.JOB_DEF.JOB_PARAM_SUBJECT)
 	String subject;
 	
 	@Autowired
@@ -44,7 +44,7 @@ public class CustomItemReader {
 		JdbcPagingItemReader<Map<String, Object>> pagingItemReader = new JdbcPagingItemReader<>();
 		pagingItemReader.setDataSource(dataSource);
 
-		pagingItemReader.setFetchSize(source.get(Constants.LABEL_FETCH_SIZE, Integer.class));
+		pagingItemReader.setFetchSize(source.get(Constants.LABEL.FETCH_SIZE, Integer.class));
 		pagingItemReader.setRowMapper(new ColumnMapRowMapper());
 
 		try {
@@ -63,18 +63,18 @@ public class CustomItemReader {
 
 	
 		
-		String columns = source.get(subject, Constants.LABEL_COLUMNS);
-		String table = source.get(subject, Constants.LABEL_TABLE);
-		String sortColumn = source.get(subject, Constants.LABEL_SORT);
-		String whereClause = source.get(subject, Constants.LABEL_WHERE);
+		String columns = source.get(subject, Constants.LABEL.COLUMNS);
+		String table = source.get(subject, Constants.LABEL.TABLE);
+		String sortColumn = source.get(subject, Constants.LABEL.SORT);
+		String whereClause = source.get(subject, Constants.LABEL.WHERE);
 
 		final Map<String, Order> sortKeys = new HashMap<>();
 		sortKeys.put(sortColumn, Order.ASCENDING);
 
 		SqlPagingQueryProviderFactoryBean pagingQueryProvider = new SqlPagingQueryProviderFactoryBean();
 		pagingQueryProvider.setSelectClause(columns);// "actor_id, first_name, last_name"
-		pagingQueryProvider.setFromClause(Constants.SQL_FROM + table);
-		pagingQueryProvider.setWhereClause(Constants.SQL_WHERE + whereClause);
+		pagingQueryProvider.setFromClause(Constants.SQL.FROM + table);
+		pagingQueryProvider.setWhereClause(Constants.SQL.WHERE + whereClause);
 		pagingQueryProvider.setSortKeys(sortKeys);
 		pagingQueryProvider.setDataSource(dataSource);
 		return pagingQueryProvider;
