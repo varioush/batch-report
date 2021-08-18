@@ -1,8 +1,6 @@
 package varioush.batch;
 
 
-import java.io.File;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,6 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
 import varioush.batch.config.SchedulerConfiguration;
 import varioush.batch.constant.Constants;
-import varioush.batch.constant.Constants.FOLDER;
 import varioush.batch.utils.EnvironmentSource;
 import varioush.batch.utils.Functions;
 
@@ -40,40 +37,36 @@ public class ReportBatchApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		
 		
-		for (FOLDER folder : Constants.FOLDER.values()) {
-			File file = new File(Functions.path(folder.name()));
-			if(file.exists() && file.isDirectory())
+		Functions.builtDirectoryStructure();
+		
+		
+		try
+		{
+			
+			String retainDay = source.get(Constants.DAY_RETAIN);
+			Long days = 40l;
+			try
 			{
-				logger.info("{} Folder already exists!!",folder.name());
+				Long no_of_days = Long.parseLong(retainDay);
+				
+				if(no_of_days>days)
+				{
+					days = no_of_days;
+				}
+				logger.info("Removing stale record older than {} days", days);
 			}
-			else
+			catch(Exception ex)
 			{
-				file.mkdirs();
+				
+				logger.warn("Removing stale record older than {} days", days);
 			}
+			Functions.deleteFilesOlderThanNdays(days);
+		}
+		catch(Exception ex)
+		{
+			logger.warn("Nothing to worries!! Delete {} yourself", Constants.DIR_TEMP);
 		}
 		
-		
-//		try
-//		{
-//			
-//			String retainDay = source.get(Constants.DAY_RETAIN);
-//			Integer days = 30;
-//			try
-//			{
-//				days = Integer.parseInt(retainDay);
-//				logger.info("Removing stale record older than {} days", days);
-//			}
-//			catch(Exception ex)
-//			{
-//				logger.warn("Removing stale record older than {} days", days);
-//			}
-//		//	Functions.deleteFilesOlderThanNdays(days);
-//		}
-//		catch(Exception ex)
-//		{
-//			logger.warn("Nothing to worries!! Delete {} yourself", Constants.DIR_TEMP);
-//		}
-//		
 		ScheduledTaskRegistrar taskRegistrar = new ScheduledTaskRegistrar();
 
 		scheduler.configureTasks(taskRegistrar);

@@ -1,10 +1,14 @@
 package varioush.batch.constant;
 
-import java.util.regex.Pattern;
-
 public class Constants {
 
-	public static final String BEAN_EXPORT_JOB = "exportJob";
+	public enum FOLDER
+	{
+		INITIATED, PROCESSED, COMPLETED
+	}
+	
+    public static final String NEW_LINE = System.lineSeparator();
+
 
 	public static final String BEAN_JOB_IDENTIFIER = "jobIdentifier";
 
@@ -18,12 +22,14 @@ public class Constants {
 
 	public static final String CHAR_DOT = ".";
 
-	public static final String CHAR_DRUM = "|~|";
+	//public static final String CRON_CLEANUP = "0 47 0/7 ? * *";
 
-	public static final String CRON_DAILY = "${cronjob.daily}";
-
-	public static final String CRON_MONTHLY = "${cronjob.monthly}";
-
+	public static final String CRON_CLEANUP = "43 * * ? * * ";
+	
+	//public static final String CRON_PENDING = "0 37 0/3 ? * *";
+	
+	public static final String CRON_UPLOAD = "23 * * ? * * ";
+	
 	public static final String DATASOURCE_BATCH = "batchDataSource";
 
 	public static final String DATASOURCE_REPORT = "reportDataSource";
@@ -34,9 +40,7 @@ public class Constants {
 
 	public static final String EXP_COUNT = "{N}";
 
-	public static final String INTERVAL_DAILY = "daily";
-
-	public static final String INTERVAL_MONTHLY = "monthly";
+	public static final String JOB_BEAN_EXPORT = "exportJob";
 
 	public static final String JOB_PARAM_FILENAME = "#{jobParameters[filename]}";
 
@@ -56,9 +60,9 @@ public class Constants {
 
 	public static final String LABEL_FOOTER = "footer";
 
-	public static final String LABEL_HEADER = "header";
+	public static final String LABEL_FTP_PATH = "ftpPath";
 
-	public static final String LABEL_INTERVAL = "interval";
+	public static final String LABEL_HEADER = "header";
 
 	public static final String LABEL_POSTFIX = "postfix";
 
@@ -80,30 +84,13 @@ public class Constants {
 
 	public static final String NAME_REPORT_DB = "REPORT-DATABASE";
 
-	public static final String REG_DATE = "(%)([dMyhms]*)(%)";
-
-	public static final String REG_DOT = "\\.";
-
 	public static final String SQL_FROM = "FROM ";
-
-	public static final String SQL_WHERE = " where ";
-
-	public static final String TOPIC_BUSINESS = "business";
-
-	public static final String TOPIC_PRINCIPAL = "principal";
 	
-	public static final String DAY_RETAIN= "temp.retain.day";
+	public static final String SQL_WHERE = " where ";
 
 	public static final String UNUSED = "unused";
 	
-	public static final Pattern Z_PATTERN = Pattern.compile(REG_DATE);
-
-	public static final String LABEL_FTP_PATH = "ftpPath";
-	
-	public enum FOLDER
-	{
-		INITIATED, PENDING, DONE
-	}
+	public static final String DAY_RETAIN= "temp.retain.day";
 }
 
 

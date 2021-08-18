@@ -58,7 +58,7 @@ public class JobConfiguration {
 		return itemReader.read();
 	}
 
-	@Bean(name = Constants.BEAN_EXPORT_JOB)
+	@Bean(name = Constants.JOB_BEAN_EXPORT)
 	public Job exportBusinessDailyDataJob(@Autowired @Qualifier(Constants.BEAN_READER_STEP) Step studentStep,
 			@Autowired InterceptingJobExecution interceptingJob) {
 

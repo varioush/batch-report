@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import varioush.batch.constant.Constants;
-import varioush.batch.utils.Functions;
+import varioush.batch.utils.Writer;
 
 @Component
 @StepScope
@@ -28,17 +28,19 @@ public class CustomItemWriter implements ItemWriter<String> {
 
 		if (items != null) {
 			String content = Constants.CHAR_BLANK;
-			String newLine = System.getProperty("line.separator");
-			String delimeter = Constants.CHAR_BLANK;
+			String newLine = Constants.NEW_LINE;
+			String delimeter = Constants.NEW_LINE;
 			for (Object item : items) {
 
 				content = content.concat(delimeter).concat(item.toString());
 				delimeter = newLine;
 
 			}
-			Functions.write(filename, content);
+			Writer writer = new Writer();
+			writer.file(filename).content(content).build();
+
 		}
-		
+
 		logger.info("Writing is in progress end!!!, filename:{}", filename);
 	}
 

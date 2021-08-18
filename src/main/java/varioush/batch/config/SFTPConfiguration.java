@@ -75,15 +75,17 @@ public class SFTPConfiguration {
 		SftpMessageHandler handler = new SftpMessageHandler(sftpSessionFactory());
 		// String dirName = (String) message.getHeaders().get("dirName");
 		ExpressionParser EXPRESSION_PARSER = new SpelExpressionParser();
-		//handler.setRemoteDirectoryExpressionString("'" + sftpRemoteDirectory + "/'" +EXPRESSION_PARSER.parseExpression("headers['dirName']"));
-		
+		// handler.setRemoteDirectoryExpressionString("'" + sftpRemoteDirectory + "/'"
+		// +EXPRESSION_PARSER.parseExpression("headers['dirName']"));
+
 		handler.setRemoteDirectoryExpression(EXPRESSION_PARSER.parseExpression("headers['path']"));
 
-		//handler.setRemoteDirectoryExpression(EXPRESSION_PARSER.parseExpression("headers['dirName']"));
+		// handler.setRemoteDirectoryExpression(EXPRESSION_PARSER.parseExpression("headers['dirName']"));
 		handler.setAutoCreateDirectory(true);
 		handler.setFileNameGenerator(message -> {
-		//	String dirName = (String) message.getHeaders().get("dirName");
-		//	handler.setRemoteDirectoryExpressionString("'" + sftpRemoteDirectory + "/'" + dirName);
+			// String dirName = (String) message.getHeaders().get("dirName");
+			// handler.setRemoteDirectoryExpressionString("'" + sftpRemoteDirectory + "/'" +
+			// dirName);
 
 			if (message.getPayload() instanceof File) {
 				return (((File) message.getPayload()).getName());
@@ -96,6 +98,7 @@ public class SFTPConfiguration {
 		return handler;
 	}
 
+	
 	@MessagingGateway
 	public interface UploadGateway {
 

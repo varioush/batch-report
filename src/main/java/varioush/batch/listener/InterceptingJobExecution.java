@@ -1,9 +1,9 @@
 package varioush.batch.listener;
 
-import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,18 +14,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import varioush.batch.config.SFTPConfiguration.UploadGateway;
 import varioush.batch.constant.Constants;
+import varioush.batch.constant.Constants.FOLDER;
 import varioush.batch.utils.EnvironmentSource;
 import varioush.batch.utils.Functions;
+import varioush.batch.utils.Writer;
 
 @Component
 public class InterceptingJobExecution implements JobExecutionListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(InterceptingJobExecution.class);
-
-	@Autowired
-	private UploadGateway gateway;
 
 	@Autowired
 	private EnvironmentSource source;
@@ -44,11 +42,13 @@ public class InterceptingJobExecution implements JobExecutionListener {
 
 		logger.info("@BeforeJob : Subject:{}, File Name :{}", subject, filename);
 
-		String header = source.get(subject, Constants.LABEL_HEADER);
+		String content = source.get(subject, Constants.LABEL_HEADER);
 
-		header = source.format(header);
+		content = source.format(content);
 
-		Functions.createAndWrite(filename, header);
+		Writer writer = new Writer();
+		writer.file(filename).content(content).build();
+				//.createAndWrite(filename, header);
 
 		logger.info("Finishing Intercepting Job Excution - Before Job!");
 	}
@@ -70,66 +70,34 @@ public class InterceptingJobExecution implements JobExecutionListener {
 
 		logger.info("@AfterJob : Subject:{}, File Name :{}", subject, filename);
 
-		String footer = source.get(subject, Constants.LABEL_FOOTER);
+		String content = Constants.NEW_LINE + source.get(subject, Constants.LABEL_FOOTER);
 
-		footer = footer.replace(Constants.EXP_COUNT, Integer.toString(noOfItemsProcessed));
+		content = content.replace(Constants.EXP_COUNT, Integer.toString(noOfItemsProcessed));
 
-		Functions.write(filename, footer);
-
-		logger.info("Initializing Uploading to SFTP!, FileName is {}", filename);
-
+		Writer writer = new Writer();
+		
+		writer.file(filename).content(content).build();
+		
+		
 		String parentPath = ftpPath.substring(0, ftpPath.indexOf("/"));
-		String ftpFileName = ftpPath.substring(ftpPath.indexOf("/")+1);
-		boolean isError = false;
-		try {
-			
-			gateway.upload(new File(filename), sftpRemoteDirectory + "/" + parentPath);
-			String path = Functions.path(Constants.FOLDER.DONE);
-			File completed = new File(path);
-			if(!completed.exists())
-			{
-				completed.mkdirs();
-			}
-			
-			File donePath = new File(path+File.separator+parentPath);
-			if(!donePath.exists())
-			{
-				donePath.mkdirs();
-			}
-			
-			Files.move(Paths.get(filename),Paths.get(path+File.separator+ftpPath));
-			
-		//	File pendingPath = new File
-		} catch (Exception ex) {
-			isError = true;
-			String path = Functions.path(Constants.FOLDER.PENDING);
-			File completed = new File(path);
-			if(!completed.exists())
-			{
-				completed.mkdirs();
-			}
-			
-			File donePath = new File(path+File.separator+parentPath);
-			if(!donePath.exists())
-			{
-				donePath.mkdirs();
-			}
-			
-			try {
-				Files.move(Paths.get(filename),Paths.get(path+File.separator+ftpPath));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			logger.error("The transferred of {} interuppted due to ", filename, ex);
-		}
-		if(isError) {
-			logger.info("Successfully Uploaded to SFTP!, FileName is {}", filename);
-		}
-		else
+
+		try
 		{
-			logger.warn("Scheduler will try again after 15 minute to copy file");
+			Path path = Functions.getPath(FOLDER.PROCESSED.name());
+			
+			Path dirPath  = Paths.get(path.toAbsolutePath().toString(), parentPath);
+			
+			Functions.createDirectory(dirPath);
+			
+			Path source =Paths.get(filename); 
+			Path dest = Paths.get(path.toAbsolutePath().toString(),ftpPath);
+			logger.info("source:{}, dest:{}", source, dest);
+			Files.move(source,dest, StandardCopyOption.REPLACE_EXISTING);
+			
+		}
+		catch(Exception ex)
+		{
+			logger.error("Error while finishing job:",ex);
 		}
 		logger.info("Finishing Intercepting Job Excution - After Job!");
 	}
