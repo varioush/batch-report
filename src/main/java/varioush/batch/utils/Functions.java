@@ -1,6 +1,5 @@
 package varioush.batch.utils;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,13 +13,8 @@ import varioush.batch.constant.Constants;
 import varioush.batch.constant.Constants.FOLDER;
 
 public class Functions {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(Functions.class);
-
-
-	
-
-
 
 	public static void createFileAndDirectory(Path path) {
 
@@ -71,7 +65,7 @@ public class Functions {
 				if (delSource && isEmpty(path)) {
 					Files.delete(path);
 				}
-			} catch (IOException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -87,7 +81,7 @@ public class Functions {
 
 	}
 
-	public static boolean isEmpty(Path path) throws IOException {
+	public static boolean isEmpty(Path path) throws Exception {
 		if (Files.isDirectory(path)) {
 			try (Stream<Path> entries = Files.list(path)) {
 				return !entries.findFirst().isPresent();
@@ -107,7 +101,7 @@ public class Functions {
 				try {
 					Path temp = Files.createDirectories(path);
 					logger.info("Path :{}, isExists:{}", temp.toAbsolutePath().toString(), Files.exists(temp));
-				} catch (IOException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}

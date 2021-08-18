@@ -9,7 +9,6 @@ public class Constants {
 	
     public static final String NEW_LINE = System.lineSeparator();
 
-
 	public static final String BEAN_JOB_IDENTIFIER = "jobIdentifier";
 
 	public static final String BEAN_READER_JOB = "readerJob";
