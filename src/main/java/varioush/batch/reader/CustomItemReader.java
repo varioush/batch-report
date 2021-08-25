@@ -63,7 +63,7 @@ public class CustomItemReader {
 	
 		
 		String columns = source.get(subject, Constants.LABEL.COLUMNS);
-		String table = source.get(subject, Constants.LABEL.TABLE);
+		String fromClause = source.get(subject, Constants.LABEL.FROM_CLAUSE);
 		String sortColumn = source.get(subject, Constants.LABEL.SORT);
 		String whereClause = source.get(subject, Constants.LABEL.WHERE);
 
@@ -72,7 +72,7 @@ public class CustomItemReader {
 
 		SqlPagingQueryProviderFactoryBean pagingQueryProvider = new SqlPagingQueryProviderFactoryBean();
 		pagingQueryProvider.setSelectClause(columns);// "actor_id, first_name, last_name"
-		pagingQueryProvider.setFromClause(Constants.SQL.FROM + table);
+		pagingQueryProvider.setFromClause(Constants.SQL.FROM + fromClause);
 		pagingQueryProvider.setWhereClause(Constants.SQL.WHERE + whereClause);
 		pagingQueryProvider.setSortKeys(sortKeys);
 		pagingQueryProvider.setDataSource(dataSource);

@@ -46,6 +46,17 @@ public class CustomItemProcessor implements ItemProcessor<Map<String, Object>, S
 		}
 
 		for (String column : columnArray) {
+			if(column.toUpperCase().contains(" AS "))
+			{
+				column = column.substring(column.trim().lastIndexOf(Constants.CHAR.SPACE)).trim();
+			}
+			else
+			{
+				column = column.substring(column.indexOf(Constants.CHAR.DOT)+1, column.length());
+			}
+			
+			
+			
 			Object obj = item.get(column);
 
 			String value = Constants.CHAR.BLANK;

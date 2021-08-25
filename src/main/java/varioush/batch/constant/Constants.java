@@ -27,6 +27,8 @@ public class Constants {
 		public static final String COMMA = ",";
 
 		public static final String DOT = ".";
+		
+		public static final String SPACE= " ";
 
 	}
 
@@ -80,7 +82,7 @@ public class Constants {
 
 		public static final String SUBJECT_LIST = "subject.list";
 
-		public static final String TABLE = "table";
+		public static final String FROM_CLAUSE = "fromClause";
 
 		public static final String TOPIC = "topic";
 
