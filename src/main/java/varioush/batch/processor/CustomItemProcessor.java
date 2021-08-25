@@ -1,6 +1,5 @@
 package varioush.batch.processor;
 
-import java.util.Arrays;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import varioush.batch.constant.Constants;
 import varioush.batch.utils.EnvironmentSource;
+import varioush.batch.utils.QueryInfo;
 
 @Component
 @StepScope
@@ -24,18 +24,18 @@ public class CustomItemProcessor implements ItemProcessor<Map<String, Object>, S
 	@Value(Constants.JOB_DEF.JOB_PARAM_SUBJECT)
 	String subject;
 
+	@Value(Constants.JOB_DEF.JOB_PARAM_COLUMNS)
+	String columns;
+
 	@Autowired
 	EnvironmentSource source;
 
 	@Override
 	public String process(Map<String, Object> item) throws Exception {
 		// no logger used to avoid over-logging
-		
-		String columns = source.get(subject, Constants.LABEL.COLUMNS);
-		String prefix = source.get(subject,Constants.LABEL.PREFIX);
-		String postfix = source.get(subject,Constants.LABEL.POSTFIX);
 
-		String[] columnArray = Arrays.stream(columns.split(Constants.CHAR.COMMA)).map(String::trim).toArray(String[]::new);
+		String prefix = source.get(subject, Constants.LABEL.PREFIX);
+		String postfix = source.get(subject, Constants.LABEL.POSTFIX);
 
 		String content = Constants.CHAR.BLANK;
 
@@ -45,18 +45,10 @@ public class CustomItemProcessor implements ItemProcessor<Map<String, Object>, S
 			content = content.concat(prefix);
 		}
 
-		for (String column : columnArray) {
-			if(column.toUpperCase().contains(" AS "))
-			{
-				column = column.substring(column.trim().lastIndexOf(Constants.CHAR.SPACE)).trim();
-			}
-			else
-			{
-				column = column.substring(column.indexOf(Constants.CHAR.DOT)+1, column.length());
-			}
-			
-			
-			
+		String columns[] = QueryInfo.split(this.columns);
+
+		for (String column : columns) {
+
 			Object obj = item.get(column);
 
 			String value = Constants.CHAR.BLANK;

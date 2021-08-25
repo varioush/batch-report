@@ -39,6 +39,7 @@ import varioush.batch.config.SFTPConfiguration.UploadGateway;
 import varioush.batch.constant.Constants;
 import varioush.batch.utils.EnvironmentSource;
 import varioush.batch.utils.FileFunctions;
+import varioush.batch.utils.QueryInfo;
 
 @Configuration
 @EnableScheduling
@@ -115,8 +116,17 @@ public class SchedulerConfiguration implements SchedulingConfigurer {
 				.get(FileFunctions.getPath(Constants.FOLDER.INITIATED.name()).toAbsolutePath().toString(), ftpPath)
 				.toAbsolutePath().toString();
 		logger.info("Subject:{}, File Name is :{}", subject, filename);
+		
+		String query = source.get(subject, Constants.LABEL.QUERY);
+		String sortKey = source.get(subject, Constants.LABEL.ORDER_BY);
+		QueryInfo info = new QueryInfo(query, sortKey).read();
+		logger.info("Query:{}", info);
 		return new JobParametersBuilder().addLong(Constants.LABEL.DATE, new Date().getTime())
 				.addString(Constants.LABEL.FILENAME, filename).addString(Constants.LABEL.SUBJECT, subject)
+				.addString(Constants.LABEL.COLUMNS, info.getColumns())
+				.addString(Constants.LABEL.FROM_CLAUSE, info.getFromClause())
+				.addString(Constants.LABEL.WHERE_CLAUSE, info.getWhereClause())
+				.addString(Constants.LABEL.ORDER_BY, info.getOrderBy())
 				.addString(Constants.LABEL.FTP_PATH, ftpPath).toJobParameters();
 
 	}

@@ -34,7 +34,19 @@ public class CustomItemReader {
 	String filename;
 	@Value(Constants.JOB_DEF.JOB_PARAM_SUBJECT)
 	String subject;
-	
+
+	@Value(Constants.JOB_DEF.JOB_PARAM_COLUMNS)
+	String columns;
+
+	@Value(Constants.JOB_DEF.JOB_PARAM_WHERE_CLAUSE)
+	String whereClause;
+
+	@Value(Constants.JOB_DEF.JOB_PARAM_FROM_CLAUSE)
+	String fromClause;
+
+	@Value(Constants.JOB_DEF.JOB_PARAM_ORDER_BY)
+	String orderBy;
+
 	@Autowired
 	EnvironmentSource source;
 
@@ -55,25 +67,17 @@ public class CustomItemReader {
 		logger.info("Reading is in progress end!!!, Subject:{}, filename:{}", subject, filename);
 		return pagingItemReader;
 
-		
 	}
 
 	public SqlPagingQueryProviderFactoryBean queryProvider() {
 
-	
-		
-		String columns = source.get(subject, Constants.LABEL.COLUMNS);
-		String fromClause = source.get(subject, Constants.LABEL.FROM_CLAUSE);
-		String sortColumn = source.get(subject, Constants.LABEL.SORT);
-		String whereClause = source.get(subject, Constants.LABEL.WHERE);
-
 		final Map<String, Order> sortKeys = new HashMap<>();
-		sortKeys.put(sortColumn, Order.ASCENDING);
+		sortKeys.put(orderBy, Order.ASCENDING);
 
 		SqlPagingQueryProviderFactoryBean pagingQueryProvider = new SqlPagingQueryProviderFactoryBean();
 		pagingQueryProvider.setSelectClause(columns);// "actor_id, first_name, last_name"
-		pagingQueryProvider.setFromClause(Constants.SQL.FROM + fromClause);
-		pagingQueryProvider.setWhereClause(Constants.SQL.WHERE + whereClause);
+		pagingQueryProvider.setFromClause(fromClause);
+		pagingQueryProvider.setWhereClause(whereClause);
 		pagingQueryProvider.setSortKeys(sortKeys);
 		pagingQueryProvider.setDataSource(dataSource);
 		return pagingQueryProvider;

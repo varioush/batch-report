@@ -18,6 +18,15 @@ public class Constants {
 		public static final String JOB_PARAM_FILENAME = "#{jobParameters[filename]}";
 
 		public static final String JOB_PARAM_SUBJECT = "#{jobParameters[subject]}";
+		
+		public static final String JOB_PARAM_COLUMNS = "#{jobParameters[columns]}";
+		
+		public static final String JOB_PARAM_FROM_CLAUSE = "#{jobParameters[fromClause]}";
+		
+		public static final String JOB_PARAM_WHERE_CLAUSE = "#{jobParameters[whereClause]}";
+		
+		public static final String JOB_PARAM_ORDER_BY = "#{jobParameters[orderBy]}";
+
 
 	}
 
@@ -27,8 +36,8 @@ public class Constants {
 		public static final String COMMA = ",";
 
 		public static final String DOT = ".";
-		
-		public static final String SPACE= " ";
+
+		public static final String SPACE = " ";
 
 	}
 
@@ -40,7 +49,7 @@ public class Constants {
 	}
 
 	public static class OTHER {
-		
+
 		public static final String DIR_TEMP = "TEMP_DIR";
 
 		public static final String EXP_COUNT = "{N}";
@@ -76,7 +85,7 @@ public class Constants {
 
 		public static final String PREFIX = "prefix";
 
-		public static final String SORT = "sort";
+		public static final String ORDER_BY = "orderBy";
 
 		public static final String SUBJECT = "subject";
 
@@ -86,11 +95,13 @@ public class Constants {
 
 		public static final String TOPIC = "topic";
 
-		public static final String WHERE = "where";
+		public static final String WHERE_CLAUSE = "whereClause";
 
 		public static final String DAY_RETAIN = "temp.retain.day";
 
 		public static final String DELIMITER = "delimiter";
+
+		public static final String QUERY = "query";
 
 	}
 
@@ -102,9 +113,11 @@ public class Constants {
 	}
 
 	public static class SQL {
-		public static final String FROM = "FROM ";
+		public static final String FROM = "FROM";
 
-		public static final String WHERE = " where ";
+		public static final String WHERE = "WHERE";
+		
+		public static final String SELECT = "SELECT";
 
 	}
 
