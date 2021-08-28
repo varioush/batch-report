@@ -1,3 +1,7 @@
+/*
+ * 
+ */
+
 package varioush.batch.listener;
 
 import java.nio.file.Files;
@@ -7,98 +11,119 @@ import java.nio.file.StandardCopyOption;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
+import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import varioush.batch.constant.Constants;
-import varioush.batch.constant.Constants.FOLDER;
-import varioush.batch.utils.EnvironmentSource;
-import varioush.batch.utils.FileFunctions;
-import varioush.batch.utils.Writer;
+import varioush.batch.utils.Functions;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class InterceptingJobExecution.
+ */
 @Component
-public class InterceptingJobExecution implements JobExecutionListener {
+public final class InterceptingJobExecution implements JobExecutionListener {
 
-	private static final Logger logger = LoggerFactory.getLogger(InterceptingJobExecution.class);
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory.getLogger(InterceptingJobExecution.class);
 
-	@Autowired
-	private EnvironmentSource source;
+    /** The functions. */
+    @Autowired
+    private Functions functions;
 
-	@Value("${sftp.remote.directory:/}")
-	private String sftpRemoteDirectory;
+//	@Value("${sftp.remote.directory:/}")
+//	private String sftpRemoteDirectory;
 
-	@Override
-	public void beforeJob(JobExecution jobExecution) {
+    /**
+     * Before job.
+     *
+     * @param jobExecution the job execution
+     */
+    @Override
+    public void beforeJob(final JobExecution jobExecution) {
 
-		logger.info("Before initializing job ");
+        LOG.info("Before initializing job ");
 
-		String filename = jobExecution.getJobParameters().getString(Constants.LABEL.FILENAME);
+        JobParameters jobParameters = jobExecution.getJobParameters();
 
-		String subject = jobExecution.getJobParameters().getString(Constants.LABEL.SUBJECT);
+        String filename = jobParameters.getString(Functions.FILENAME);
 
-		logger.info("@BeforeJob : Subject:{}, File Name :{}", subject, filename);
+        String subject = jobParameters.getString(Functions.SUBJECT);
 
-		String content = source.get(subject, Constants.LABEL.HEADER);
+        LOG.info("@BeforeJob : Subject:{}, File Name :{}", subject, filename);
 
-		content = source.format(content);
+        String content = functions.get(subject, Functions.HEADER);
 
-		Writer writer = new Writer();
-		writer.file(filename).content(content).build();
+        content = Functions.process(content);
 
-		logger.info("Finishing Intercepting Job Excution - Before Job!");
-	}
+        Functions.write(filename, content);
 
-	@Override
-	public void afterJob(JobExecution jobExecution) {
+        LOG.info("Finishing Intercepting Job Excution - Before Job!");
+    }
 
-		logger.info("After Finishing job ");
+    /**
+     * After job.
+     *
+     * @param jobExecution the job execution
+     */
+    @Override
+    public void afterJob(final JobExecution jobExecution) {
 
-		int noOfItemsProcessed = 0;
-		for (StepExecution stepExecution : jobExecution.getStepExecutions()) {
-			noOfItemsProcessed += stepExecution.getWriteCount();
-		}
-		String ftpPath = jobExecution.getJobParameters().getString(Constants.LABEL.FTP_PATH);
+        LOG.info("After Finishing job ");
 
-		String filename = jobExecution.getJobParameters().getString(Constants.LABEL.FILENAME);
+        int noOfItemsProcessed = 0;
+        for (StepExecution stepExecution : jobExecution.getStepExecutions()) {
+            noOfItemsProcessed += stepExecution.getWriteCount();
+        }
 
-		String subject = jobExecution.getJobParameters().getString(Constants.LABEL.SUBJECT);
+        JobParameters jobParameters = jobExecution.getJobParameters();
 
-		logger.info("@AfterJob : Subject:{}, File Name :{}", subject, filename);
+        String filename = jobParameters.getString(Functions.FILENAME);
 
-		String content = Constants.OTHER.NEW_LINE + source.get(subject, Constants.LABEL.FOOTER);
+        String subject = jobParameters.getString(Functions.SUBJECT);
 
-		content = content.replace(Constants.OTHER.EXP_COUNT, Integer.toString(noOfItemsProcessed));
+        LOG.info("@AfterJob : Subject:{}, File Name :{}", subject, filename);
 
-		Writer writer = new Writer();
-		
-		writer.file(filename).content(content).build();
-		
-		
-		String parentPath = ftpPath.substring(0, ftpPath.indexOf("/"));
+        String content = Functions.NEW_LINE + functions.get(subject, Functions.FOOTER);
 
-		try
-		{
-			Path path = FileFunctions.getPath(FOLDER.PROCESSED.name());
-			
-			Path dirPath  = Paths.get(path.toAbsolutePath().toString(), parentPath);
-			
-			Files.createDirectories(dirPath);
-			
-			Path source =Paths.get(filename); 
-			Path dest = Paths.get(path.toAbsolutePath().toString(),ftpPath);
-			logger.info("source:{}, dest:{}", source, dest);
-			Files.move(source,dest, StandardCopyOption.REPLACE_EXISTING);
-			
-		}
-		catch(Exception ex)
-		{
-			logger.error("Error while finishing job:",ex);
-		}
-		logger.info("Finishing Intercepting Job Excution - After Job!");
-	}
+        String countInText = Integer.toString(noOfItemsProcessed);
+
+        content = content.replace(Functions.EXP_COUNT, countInText);
+
+        Functions.write(filename, content);
+
+        String ftpPath = jobParameters.getString(Functions.FTP_PATH);
+
+        if (ftpPath != null) {
+
+            String parentPath = ftpPath.substring(0, ftpPath.indexOf("/"));
+
+            try {
+                Path path = Functions.getPath(Functions.FOLDER.write.name());
+
+                String absoluteDirPath = path.toAbsolutePath().toString();
+
+                Path dirPath = Paths.get(absoluteDirPath, parentPath);
+
+                Files.createDirectories(dirPath);
+
+                Path source = Paths.get(filename);
+                Path dest = Paths.get(absoluteDirPath, ftpPath);
+                LOG.info("source:{}, dest:{}", source, dest);
+                Files.move(source, dest, StandardCopyOption.REPLACE_EXISTING);
+
+            } catch (Exception ex) {
+                LOG.error("Error while finishing job:", ex);
+            }
+            LOG.info("Finishing Intercepting Job Excution - After Job!");
+        } else {
+            LOG.error("Error while finishing job, ftpPath is blank:");
+
+        }
+    }
 
 }

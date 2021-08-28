@@ -1,28 +1,51 @@
+/*
+ * 
+ */
+
 package varioush.batch.listener;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.ItemProcessListener;
 
-import varioush.batch.constant.Constants;
+/**
+ * The listener interface for receiving itemCounts events. The class that is
+ * interested in processing a itemCounts event implements this interface, and
+ * the object created with that class is registered with a component using the
+ * component's addItemCountsListener method. When the itemCounts event occurs,
+ * that object's appropriate method is invoked.
+ *
+ * 
+ */
+public final class ItemCountsListener implements ItemProcessListener<Object, Object> {
 
-public class ItemCountsListener implements ItemProcessListener<Object, Object> {
+    /** The Constant COUNT. */
+    private static final AtomicLong COUNT = new AtomicLong(1);
 
-	@SuppressWarnings(Constants.OTHER.UNUSED)
-	private static final Logger logger = LoggerFactory.getLogger(ItemCountsListener.class);
+    /**
+     * After process.
+     *
+     * @param item   the item
+     * @param result the result
+     */
+    public void afterProcess(final Object item, final Object result) {
+        COUNT.getAndIncrement();
+    }
 
-	
-	private static final AtomicLong count = new AtomicLong(1);
+    /**
+     * Before process.
+     *
+     * @param item the item
+     */
+    public void beforeProcess(final Object item) {
+    }
 
-	public void afterProcess(Object item, Object result) {
-		count.getAndIncrement();
-	}
-
-	public void beforeProcess(Object item) {
-	}
-
-	public void onProcessError(Object item, Exception e) {
-	}
+    /**
+     * On process error.
+     *
+     * @param item the item
+     * @param e    the e
+     */
+    public void onProcessError(final Object item, final Exception e) {
+    }
 }

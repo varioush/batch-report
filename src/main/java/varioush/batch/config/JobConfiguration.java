@@ -1,9 +1,15 @@
+/*
+ * 
+ */
+
 package varioush.batch.config;
+
 
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -17,61 +23,88 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import varioush.batch.constant.Constants;
 import varioush.batch.listener.InterceptingJobExecution;
 import varioush.batch.processor.CustomItemProcessor;
 import varioush.batch.reader.CustomItemReader;
-import varioush.batch.utils.EnvironmentSource;
+import varioush.batch.utils.Functions;
 import varioush.batch.writer.CustomItemWriter;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class JobConfiguration.
+ */
 @Configuration
 @EnableBatchProcessing
 public class JobConfiguration {
 
-	@SuppressWarnings(Constants.OTHER.UNUSED)
-	private static final Logger logger = LoggerFactory.getLogger(JobConfiguration.class);
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory.getLogger(JobConfiguration.class);
 
-	
-	@Autowired
-	private JobBuilderFactory jobBuilderFactory;
+    /** The job builder factory. */
+    @Autowired
+    private JobBuilderFactory jobBuilderFactory;
 
-	@Autowired
-	private StepBuilderFactory stepBuilderFactory;
+    /** The step builder factory. */
+    @Autowired
+    private StepBuilderFactory stepBuilderFactory;
 
-	@Autowired
-	private CustomItemReader itemReader;
+    /** The item reader. */
+    @Autowired
+    private CustomItemReader itemReader;
 
-	@Autowired
-	@StepScope
-	private CustomItemWriter customItemWriter;
+    /** The custom item writer. */
+    @Autowired
+    @StepScope
+    private CustomItemWriter customItemWriter;
 
-	@Autowired
-	private CustomItemProcessor customItemProcessor;
+    /** The custom item processor. */
+    @Autowired
+    private CustomItemProcessor customItemProcessor;
 
-	@Autowired
-	private EnvironmentSource source;
+    /** The functions. */
+    @Autowired
+    private Functions functions;
 
-	@StepScope
-	@Bean(Constants.JOB_DEF.READER_JOB)
-	public JdbcPagingItemReader<Map<String, Object>> customItemReader() {
+    /**
+     * Custom item reader.
+     *
+     * @return the jdbc paging item reader
+     */
+    @StepScope
+    @Bean(Functions.READER_JOB)
+    public JdbcPagingItemReader<Map<String, Object>> customItemReader() {
 
-		return itemReader.read();
-	}
+        return itemReader.read();
+    }
 
-	@Bean(name = Constants.JOB_DEF.JOB_BEAN_EXPORT)
-	public Job exportBusinessDailyDataJob(@Autowired @Qualifier(Constants.JOB_DEF.READER_STEP) Step studentStep,
-			@Autowired InterceptingJobExecution interceptingJob) {
+    /**
+     * Export data job.
+     *
+     * @param studentStep     the student step
+     * @param interceptingJob the intercepting job
+     * @return the job
+     */
+    @Bean(name = Functions.JOB_BEAN_EXPORT)
+    public Job exportDataJob(@Autowired @Qualifier(Functions.READER_STEP) Step studentStep,
+            @Autowired InterceptingJobExecution interceptingJob) {
+        LOG.info("Configuring JOB");
+        return jobBuilderFactory.get(Functions.JOB_IDENTIFIER).incrementer(new RunIdIncrementer()).flow(studentStep)
+                .end().listener(interceptingJob).build();
+    }
 
-		return jobBuilderFactory.get(Constants.JOB_DEF.JOB_IDENTIFIER).incrementer(new RunIdIncrementer())
-				.flow(studentStep).end().listener(interceptingJob).build();// .listener(studentJobListener)
-	}
-
-	@Bean(Constants.JOB_DEF.READER_STEP)
-	public Step businessReaderStep(
-			@Autowired @Qualifier(Constants.JOB_DEF.READER_JOB) JdbcPagingItemReader<Map<String, Object>> reader) {
-		return stepBuilderFactory.get(Constants.JOB_DEF.READER_STEP)
-				.<Map<String, Object>, String>chunk(Integer.parseInt(source.get(Constants.LABEL.FETCH_SIZE)))
-				.reader(reader).writer(customItemWriter).processor(customItemProcessor).build();
-	}
+    /**
+     * Reader step.
+     *
+     * @param reader the reader
+     * @return the step
+     */
+    @Bean(Functions.READER_STEP)
+    public Step readerStep(
+            @Autowired @Qualifier(Functions.READER_JOB) JdbcPagingItemReader<Map<String, Object>> reader) {
+        LOG.info("Configuring Reader Step");
+        int fetchSize = Integer.parseInt(functions.get(Functions.FETCH_SIZE));
+        return stepBuilderFactory.get(Functions.READER_STEP).<Map<String, Object>, String>chunk(fetchSize)
+                .reader(reader).writer(customItemWriter).processor(customItemProcessor).build();
+    }
 
 }

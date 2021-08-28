@@ -1,0 +1,4 @@
+/*
+ * 
+ */
+package varioush.batch.writer;

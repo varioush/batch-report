@@ -1,19 +1,25 @@
+/*
+ * 
+ */
+
 package varioush.batch.config;
 
 import java.io.IOException;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecutionException;
 import org.springframework.batch.core.JobParameters;
@@ -36,148 +42,240 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.CronTrigger;
 
 import varioush.batch.config.SFTPConfiguration.UploadGateway;
-import varioush.batch.constant.Constants;
-import varioush.batch.utils.EnvironmentSource;
-import varioush.batch.utils.FileFunctions;
-import varioush.batch.utils.QueryInfo;
+import varioush.batch.utils.Functions;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SchedulerConfiguration.
+ */
 @Configuration
 @EnableScheduling
 public class SchedulerConfiguration implements SchedulingConfigurer {
 
-	private static final Logger logger = LoggerFactory.getLogger(SchedulerConfiguration.class);
+    /** The log. */
+    final Logger LOG = LoggerFactory.getLogger(SchedulerConfiguration.class);
 
-	@Bean
-	public Executor taskExecutor() {
-		return Executors.newFixedThreadPool(executorThreadPoolSize);
+    /**
+     * Task executor.
+     *
+     * @return the executor
+     */
+    @Bean
+    public Executor taskExecutor() {
+        return Executors.newFixedThreadPool(this.executorThreadPoolSize);
 
-	}
+    }
 
-	@Value("${default.task.executor.size:4}")
-	public void setExecutorThreadPoolSize(int executorThreadPoolSize) {
-		this.executorThreadPoolSize = executorThreadPoolSize;
-	}
+    /**
+     * Sets the executor thread pool size.
+     *
+     * @param executorThreadPoolSize the new executor thread pool size
+     */
+    @Value("${default.task.executor.size:4}")
+    public void setExecutorThreadPoolSize(final int executorThreadPoolSize) {
+        this.executorThreadPoolSize = executorThreadPoolSize;
+    }
 
-	private int executorThreadPoolSize;
+    /** The executor thread pool size. */
+    private int executorThreadPoolSize;
 
-	@Autowired
-	EnvironmentSource source;
+    /** The functions. */
+    @Autowired
+    private Functions functions;
 
-	List<CronTask> cronTasks;
+    /** The launcher. */
+    @Autowired
+    private JobLauncher launcher;
 
-	@Autowired
-	JobLauncher launcher;
+    /** The ebd job. */
+    @Autowired
+    @Qualifier(Functions.JOB_BEAN_EXPORT)
+    private Job ebdJob;
 
-	@Autowired
-	@Qualifier(Constants.JOB_DEF.JOB_BEAN_EXPORT)
-	Job ebdJob;
+    /** The sftp remote directory. */
+    @Value("${sftp.remote.directory:/}")
+    private String sftpRemoteDirectory;
 
-	@Value("${sftp.remote.directory:/}")
-	private String sftpRemoteDirectory;
+    /** The gateway. */
+    @Autowired
+    private UploadGateway gateway;
 
-	@Autowired
-	private UploadGateway gateway;
+    /**
+     * Configure tasks.
+     *
+     * @param taskRegistrar the task registrar
+     */
+    @Override
+    public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
+        // "Calls scheduleTasks() at bean construction time" - docs
 
-	@Override
-	public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
-		// "Calls scheduleTasks() at bean construction time" - docs
+        String listOfSubjects = functions.get(Functions.SUBJECT_LIST);
 
-		String listOfSubjects = source.get(Constants.LABEL.SUBJECT_LIST);
+        String[] subjects = listOfSubjects.split(Functions.COMMA);
 
-		String[] subjects = listOfSubjects.split(Constants.CHAR.COMMA);
+        for (String subject : subjects) {
 
-		for (String subject : subjects) {
+            CronTask ct = new CronTask(new Runnable() {
+                @Override
+                public void run() {
+                    final JobParameters jobParameters = jobParameters(subject);
 
-			CronTask ct = new CronTask(new Runnable() {
-				@Override
-				public void run() {
-					final JobParameters jobParameters = jobParameters(subject);
+                    try {
+                        launcher.run(ebdJob, jobParameters);
+                    } catch (JobExecutionException e) {
+                        LOG.warn("cannot execute reportJob");
+                    }
+                }
+            }, functions.get(functions.get(subject, Functions.CRON)));
 
-					try {
-						launcher.run(ebdJob, jobParameters);
-					} catch (JobExecutionException e) {
-						logger.warn("cannot execute reportJob");
-					}
-				}
-			}, source.get(source.get(subject, Constants.LABEL.CRON)));
+            taskRegistrar.addCronTask(ct);
+        }
+        taskRegistrar.afterPropertiesSet();
+    }
 
-			taskRegistrar.addCronTask(ct);
-		}
-		taskRegistrar.afterPropertiesSet();
-	}
+    /**
+     * Creates the cron task.
+     *
+     * @param action     the action
+     * @param expression the expression
+     * @return the cron task
+     */
+    public CronTask createCronTask(Runnable action, String expression) {
+        return new CronTask(action, new CronTrigger(expression));
+    }
 
-	public CronTask createCronTask(Runnable action, String expression) {
-		return new CronTask(action, new CronTrigger(expression));
-	}
+    /**
+     * Job parameters.
+     *
+     * @param subject the subject
+     * @return the job parameters
+     */
+    private JobParameters jobParameters(String subject) {
+        String ftpPath = functions.getAndFormat(subject, Functions.FILENAME);
 
-	private JobParameters jobParameters(String subject) {
-		String ftpPath = source.getAndFormat(subject, Constants.LABEL.FILENAME);
-		String filename = Paths
-				.get(FileFunctions.getPath(Constants.FOLDER.INITIATED.name()).toAbsolutePath().toString(), ftpPath)
-				.toAbsolutePath().toString();
-		logger.info("Subject:{}, File Name is :{}", subject, filename);
-		
-		String query = source.get(subject, Constants.LABEL.QUERY);
-		String sortKey = source.get(subject, Constants.LABEL.ORDER_BY);
-		QueryInfo info = new QueryInfo(query, sortKey).read();
-		logger.info("Query:{}", info);
-		return new JobParametersBuilder().addLong(Constants.LABEL.DATE, new Date().getTime())
-				.addString(Constants.LABEL.FILENAME, filename).addString(Constants.LABEL.SUBJECT, subject)
-				.addString(Constants.LABEL.COLUMNS, info.getColumns())
-				.addString(Constants.LABEL.FROM_CLAUSE, info.getFromClause())
-				.addString(Constants.LABEL.WHERE_CLAUSE, info.getWhereClause())
-				.addString(Constants.LABEL.ORDER_BY, info.getOrderBy())
-				.addString(Constants.LABEL.FTP_PATH, ftpPath).toJobParameters();
+        Path readPath = Functions.getPath(Functions.FOLDER.read.name());
+        String filename = Paths.get(readPath.toAbsolutePath().toString(), ftpPath).toAbsolutePath().toString();
+        LOG.info("Subject:{}, File Name is :{}", subject, filename);
 
-	}
+        String query = functions.get(subject, Functions.QUERY);
+        String orderBy = functions.get(subject, Functions.ORDER_BY);
+        Functions.SQL sql = Functions.process(query, orderBy);
+        LOG.info("SQL Meta Data:{}", sql);
+        functions.putSubject(subject, sql);
+        return new JobParametersBuilder().addLong(Functions.DATE, new Date().getTime())
+                .addString(Functions.FILENAME, filename).addString(Functions.SUBJECT, subject)
+                .addString(Functions.FTP_PATH, ftpPath).toJobParameters();
 
-	@Scheduled(cron = Constants.OTHER.CRON_UPLOAD)
-	public void scheduleUploadToSFtp() throws JobParametersInvalidException, JobExecutionAlreadyRunningException,
-			JobRestartException, JobInstanceAlreadyCompleteException, IOException {
-		
-		
-		logger.info("Processing SFTP Items");
+    }
 
-		Path path = FileFunctions.getPath(Constants.FOLDER.PROCESSED.name());
-		Path completedPath = FileFunctions.getPath(Constants.FOLDER.COMPLETED.name());
+    /**
+     * Schedule upload to S ftp.
+     *
+     * @throws JobParametersInvalidException       the job parameters invalid
+     *                                             exception
+     * @throws JobExecutionAlreadyRunningException the job execution already running
+     *                                             exception
+     * @throws JobRestartException                 the job restart exception
+     * @throws JobInstanceAlreadyCompleteException the job instance already complete
+     *                                             exception
+     * @throws IOException                         Signals that an I/O exception has
+     *                                             occurred.
+     */
+    @Scheduled(cron = "${cronjob.upload}")
+    public void scheduleUploadToSFtp() throws JobParametersInvalidException, JobExecutionAlreadyRunningException,
+            JobRestartException, JobInstanceAlreadyCompleteException, IOException {
 
-		if (Files.isDirectory(path)) {
-			try (Stream<Path> dirs = Files.list(path)) {
-				for (Iterator<Path> iterator = dirs.iterator(); iterator.hasNext();) {
-					Path dirPath = iterator.next();
-					if (Files.isDirectory(dirPath)) {
-						try (Stream<Path> files = Files.list(dirPath)) {
-							for (Iterator<Path> iteratorFile = files.iterator(); iteratorFile.hasNext();) {
-								Path file = iteratorFile.next();
-								try {
-									if (Files.isRegularFile(file)) {
-										gateway.upload(file.toFile(),
-												sftpRemoteDirectory + "/" + dirPath.getFileName().toString());
+        LOG.info("Processing SFTP Items");
 
-										Path destFolder = Paths.get(completedPath.toAbsolutePath().toString(),
-												dirPath.getFileName().toString());// +File.separator+file.getName());
+        Path path = Functions.getPath(Functions.FOLDER.write.name());
 
-										Files.createDirectories(destFolder);
+        if (Files.isDirectory(path)) {
+            try (Stream<Path> dirs = Files.list(path)) {
+                transferPendingDir(dirs);
+            }
+        }
 
-										Path dest = Paths.get(destFolder.toAbsolutePath().toString(),
-												file.getFileName().toString());
+    }
 
-										logger.info("source:{}, dest:{}", file, dest);
-										Files.move(file, dest, StandardCopyOption.REPLACE_EXISTING);
+    /**
+     * Transfer pending dir.
+     *
+     * @param dirs the dirs
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    private void transferPendingDir(Stream<Path> dirs) throws IOException {
 
-									}
+        for (Iterator<Path> iterator = dirs.iterator(); iterator.hasNext();) {
+            Path dirPath = iterator.next();
+            if (dirPath != null && Files.isDirectory(dirPath)) {
+                try (Stream<Path> files = Files.list(dirPath)) {
+                    transferPendingFiles(dirPath, files);
+                }
+            }
+        }
+    }
 
-								} catch (RuntimeException rx) {
-									rx.printStackTrace();
-									logger.warn("Will Retry because SFTP is down.");
-								}
-							}
-						}
-					}
-				}
-			} 
-		}
+    /**
+     * Transfer pending files.
+     *
+     * @param dirPath the dir path
+     * @param files   the files
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    private void transferPendingFiles(Path dirPath, Stream<Path> files) throws IOException {
 
-	}
+        for (Iterator<Path> iteratorFile = files.iterator(); iteratorFile.hasNext();) {
+            Path file = iteratorFile.next();
+            transferPendingFile(dirPath, file);
+        }
+    }
+
+    /**
+     * Transfer pending file.
+     *
+     * @param dirPath the dir path
+     * @param file    the file
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    private void transferPendingFile(Path dirPath, Path file) throws IOException {
+        if (dirPath == null || file == null) {
+
+            throw new RuntimeException("Issue with dirpath: " + dirPath + " or file:" + file);
+        }
+
+        Path completedPath = Functions.getPath(Functions.FOLDER.done.name());
+        try {
+            if (dirPath != null && Files.isRegularFile(file)) {
+
+                Path dirName = dirPath.getFileName();
+                String ftpLocation = sftpRemoteDirectory + "/" + dirName.toString();
+
+                gateway.upload(file.toFile(), ftpLocation);
+
+                String absolutePath = completedPath.toAbsolutePath().toString();
+                Path destFolder = Paths.get(absolutePath, dirName.toString());
+
+                Files.createDirectories(destFolder);
+                Path pathFileName = file.getFileName();
+
+                String destPath = destFolder.toAbsolutePath().toString();
+                if (pathFileName != null) {
+                    Path dest = Paths.get(destPath, pathFileName.toString());
+
+                    LOG.info("source:{}, dest:{}", file, dest);
+                    Files.move(file, dest, StandardCopyOption.REPLACE_EXISTING);
+                } else {
+                    throw new RuntimeException(
+                            "Something is wrong here!!!, " + "pathFileName is null. " + "Please contact Developer!!");
+                }
+
+            }
+
+        } catch (RuntimeException rx) {
+            rx.printStackTrace();
+            LOG.warn("Will Retry because SFTP is down.");
+        }
+
+    }
 
 }

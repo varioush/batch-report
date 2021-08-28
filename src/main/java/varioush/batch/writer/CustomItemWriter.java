@@ -1,46 +1,63 @@
+/*
+ * 
+ */
+
 package varioush.batch.writer;
 
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import varioush.batch.constant.Constants;
-import varioush.batch.utils.Writer;
+import varioush.batch.utils.Functions;
+
+/**
+ * The Class CustomItemWriter.
+ */
 
 @Component
 @StepScope
-public class CustomItemWriter implements ItemWriter<String> {
+public final class CustomItemWriter implements ItemWriter<String> {
 
-	private static final Logger logger = LoggerFactory.getLogger(CustomItemWriter.class);
+    /** The Constant LOG. */
 
-	@Value(Constants.JOB_DEF.JOB_PARAM_FILENAME)
-	String filename;
+    private static final Logger LOG = LoggerFactory.getLogger(CustomItemWriter.class);
 
-	@Override
-	public void write(List<? extends String> items) throws Exception {
+    /** The filename. */
 
-		logger.info("Writing is in progress start!!!, filename:{}", filename);
+    @Value(Functions.JOB_PARAM_FILENAME)
+    private String filename;
 
-		if (items != null) {
-			String content = Constants.CHAR.BLANK;
+    /**
+     * Write.
+     *
+     * @param items the items
+     * @throws Exception the exception
+     */
+    @Override
+    public void write(final List<? extends String> items) throws Exception {
 
-			
-			for (Object item : items) {
+        LOG.info("Writing is in progress!, filename:{}", filename);
 
-				content = content.concat(Constants.OTHER.NEW_LINE).concat(item.toString());
+        if (items != null) {
 
-			}
-			Writer writer = new Writer();
-			writer.file(filename).content(content).build();
+            String content = Functions.BLANK;
 
-		}
+            for (Object item : items) {
+                content = content.concat(Functions.NEW_LINE);
+                content = content.concat(item.toString());
+            }
 
-		logger.info("Writing is in progress end!!!, filename:{}", filename);
-	}
+            Functions.write(filename, content);
+
+        }
+
+        LOG.info("Writing Finished, filename:{}", filename);
+    }
 
 }
