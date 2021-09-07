@@ -151,10 +151,13 @@ public class SchedulerConfiguration implements SchedulingConfigurer {
      * @return the job parameters
      */
     private JobParameters jobParameters(String subject) {
-        String ftpPath = functions.getAndFormat(subject, Functions.FILENAME);
+        String ftpFileName = functions.getAndFormat(subject, Functions.FILENAME);
+        String ftpDir = functions.getAndFormat(subject, Functions.DIR);
 
+        
+        
         Path readPath = Functions.getPath(Functions.FOLDER.read.name());
-        String filename = Paths.get(readPath.toAbsolutePath().toString(), ftpPath).toAbsolutePath().toString();
+        String filename = Paths.get(readPath.toAbsolutePath().toString(), ftpFileName).toAbsolutePath().toString();
         LOG.info("Subject:{}, File Name is :{}", subject, filename);
 
         String query = functions.get(subject, Functions.QUERY);
@@ -164,7 +167,8 @@ public class SchedulerConfiguration implements SchedulingConfigurer {
         functions.putSubject(subject, sql);
         return new JobParametersBuilder().addLong(Functions.DATE, new Date().getTime())
                 .addString(Functions.FILENAME, filename).addString(Functions.SUBJECT, subject)
-                .addString(Functions.FTP_PATH, ftpPath).toJobParameters();
+                .addString(Functions.FTP_FILE_NAME, ftpFileName)
+                .addString(Functions.FTP_PATH, ftpDir).toJobParameters();
 
     }
 

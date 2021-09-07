@@ -96,23 +96,24 @@ public final class InterceptingJobExecution implements JobExecutionListener {
 
         Functions.write(filename, content);
 
-        String ftpPath = jobParameters.getString(Functions.FTP_PATH);
+        String ftpFileName = jobParameters.getString(Functions.FTP_FILE_NAME);
+        
+        String ftpDir = jobParameters.getString(Functions.FTP_PATH);
 
-        if (ftpPath != null) {
 
-            String parentPath = ftpPath.substring(0, ftpPath.indexOf("/"));
+        if (ftpFileName != null) {
+
+           
 
             try {
                 Path path = Functions.getPath(Functions.FOLDER.write.name());
 
                 String absoluteDirPath = path.toAbsolutePath().toString();
 
-                Path dirPath = Paths.get(absoluteDirPath, parentPath);
-
-                Files.createDirectories(dirPath);
+               
 
                 Path source = Paths.get(filename);
-                Path dest = Paths.get(absoluteDirPath, ftpPath);
+                Path dest = Paths.get(absoluteDirPath, ftpDir + Functions.UNDERSCORE  + ftpFileName);
                 LOG.info("source:{}, dest:{}", source, dest);
                 Files.move(source, dest, StandardCopyOption.REPLACE_EXISTING);
 

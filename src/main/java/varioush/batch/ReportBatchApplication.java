@@ -20,7 +20,9 @@ import varioush.batch.utils.Functions;
 /**
  * The Class ReportBatchApplication.
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {
+        "varioush"
+})
 
 public class ReportBatchApplication implements CommandLineRunner {
 

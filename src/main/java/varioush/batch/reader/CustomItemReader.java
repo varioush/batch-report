@@ -23,7 +23,7 @@ import varioush.batch.utils.Functions;
 
 @Component
 @StepScope
-public final class CustomItemReader {
+public  class CustomItemReader {
 
     final Logger LOG = LoggerFactory.getLogger(CustomItemReader.class);
 

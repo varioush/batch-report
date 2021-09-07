@@ -35,6 +35,12 @@ public class Functions implements Constants {
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(Functions.class);
 
+
+
+
+
+  
+
     /** The source. */
     @Autowired
     Environment source;
@@ -303,14 +309,22 @@ public class Functions implements Constants {
                     "As there is no key defined!!! By default, first column will be considered as default sort column");
             orderBy = columnArray[0].trim();
 
-        } else {
-            boolean isSortKeyValid = Arrays.stream(columnArray).anyMatch(orderBy::equals);
-
-            if (!isSortKeyValid) {
-                throw new RuntimeException("Please verify sort Key. The sort key must be part of columns.!!!");
-
-            }
-        }
+        } 
+//        else {
+//
+//            String sortColumn = orderBy;
+//            int i = orderBy.lastIndexOf('.');
+//            if (i > 0) {
+//                sortColumn = orderBy.substring(i + 1);
+//            }
+//
+//            boolean isSortKeyValid = Arrays.stream(columnArray).anyMatch(sortColumn::equals);
+//
+//            if (!isSortKeyValid) {
+//                throw new RuntimeException("Please verify sort Key. The sort key must be part of columns.!!!");
+//
+//            }
+//        }
 
         Functions.SQL sql = new Functions.SQL(query, columns, fromClause, whereClause, orderBy, columnArray);
 

@@ -79,6 +79,9 @@ interface Constants {
     /** The cron. */
     String CRON = "cron";
 
+    /** The dir. */
+    String DIR = "dir";
+    
     /** The date. */
     String DATE = "date";
 
@@ -91,6 +94,8 @@ interface Constants {
     /** The footer. */
     String FOOTER = "footer";
 
+    String FTP_FILE_NAME = "ftpFile";
+    
     /** The ftp path. */
     String FTP_PATH = "ftpPath";
 
@@ -144,5 +149,7 @@ interface Constants {
 
     /** The select. */
     String SELECT = "SELECT";
+    
+    String UNDERSCORE = "_________";
 
 }

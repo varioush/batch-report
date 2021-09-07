@@ -22,7 +22,7 @@ import varioush.batch.utils.Functions;
 
 @Component
 @StepScope
-public final class CustomItemWriter implements ItemWriter<String> {
+public class CustomItemWriter implements ItemWriter<String> {
 
     /** The Constant LOG. */
 

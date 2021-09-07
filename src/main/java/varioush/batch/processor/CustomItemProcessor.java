@@ -20,7 +20,7 @@ import varioush.batch.utils.Functions;
  */
 @Component
 @StepScope
-public final class CustomItemProcessor implements ItemProcessor<Map<String, Object>, String> {
+public class CustomItemProcessor implements ItemProcessor<Map<String, Object>, String> {
 
     /** The subject. */
     @Value(Functions.JOB_PARAM_SUBJECT)
