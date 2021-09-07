@@ -221,19 +221,22 @@ public class SchedulerConfiguration implements SchedulingConfigurer {
 
                 Path tempFilePath = Paths.get(tempDirPath.toAbsolutePath().toString(), dirAndFile[1]);
 
+                
+                Files.copy(file, tempFilePath, StandardCopyOption.REPLACE_EXISTING);
 
-                Files.copy(file, tempFilePath);
+                String dirName = dirAndFile[0];
+             
+                String ftpLocation = sftpRemoteDirectory + "/" + dirName;
 
-                Path dirName = Paths.get(completedPath.toAbsolutePath().toString(), dirAndFile[0]);
-                String ftpLocation = sftpRemoteDirectory + "/" + dirName.toString();
-
+                
+                
                 gateway.upload(tempFilePath.toFile(), ftpLocation);
 
                 String absolutePath = completedPath.toAbsolutePath().toString();
                 Path destFolder = Paths.get(absolutePath, dirName.toString());
 
                 Files.createDirectories(destFolder);
-                Path pathFileName = file.getFileName();
+                Path pathFileName = tempFilePath.getFileName();
 
                 String destPath = destFolder.toAbsolutePath().toString();
                 if (pathFileName != null) {
