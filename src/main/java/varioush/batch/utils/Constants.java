@@ -19,7 +19,9 @@ interface Constants {
         /** The read. */
         read,
         /** The write. */
-        write
+        write,
+        
+        temp
     }
 
     /** The job identifier. */

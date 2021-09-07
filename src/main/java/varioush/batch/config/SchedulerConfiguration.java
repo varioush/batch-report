@@ -154,8 +154,6 @@ public class SchedulerConfiguration implements SchedulingConfigurer {
         String ftpFileName = functions.getAndFormat(subject, Functions.FILENAME);
         String ftpDir = functions.getAndFormat(subject, Functions.DIR);
 
-        
-        
         Path readPath = Functions.getPath(Functions.FOLDER.read.name());
         String filename = Paths.get(readPath.toAbsolutePath().toString(), ftpFileName).toAbsolutePath().toString();
         LOG.info("Subject:{}, File Name is :{}", subject, filename);
@@ -167,8 +165,8 @@ public class SchedulerConfiguration implements SchedulingConfigurer {
         functions.putSubject(subject, sql);
         return new JobParametersBuilder().addLong(Functions.DATE, new Date().getTime())
                 .addString(Functions.FILENAME, filename).addString(Functions.SUBJECT, subject)
-                .addString(Functions.FTP_FILE_NAME, ftpFileName)
-                .addString(Functions.FTP_PATH, ftpDir).toJobParameters();
+                .addString(Functions.FTP_FILE_NAME, ftpFileName).addString(Functions.FTP_PATH, ftpDir)
+                .toJobParameters();
 
     }
 
@@ -194,44 +192,14 @@ public class SchedulerConfiguration implements SchedulingConfigurer {
         Path path = Functions.getPath(Functions.FOLDER.write.name());
 
         if (Files.isDirectory(path)) {
-            try (Stream<Path> dirs = Files.list(path)) {
-                transferPendingDir(dirs);
+            Stream<Path> files = Files.list(path);
+            for (Iterator<Path> iteratorFile = files.iterator(); iteratorFile.hasNext();) {
+                Path file = iteratorFile.next();
+                transferPendingFile(file);
             }
+
         }
 
-    }
-
-    /**
-     * Transfer pending dir.
-     *
-     * @param dirs the dirs
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    private void transferPendingDir(Stream<Path> dirs) throws IOException {
-
-        for (Iterator<Path> iterator = dirs.iterator(); iterator.hasNext();) {
-            Path dirPath = iterator.next();
-            if (dirPath != null && Files.isDirectory(dirPath)) {
-                try (Stream<Path> files = Files.list(dirPath)) {
-                    transferPendingFiles(dirPath, files);
-                }
-            }
-        }
-    }
-
-    /**
-     * Transfer pending files.
-     *
-     * @param dirPath the dir path
-     * @param files   the files
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    private void transferPendingFiles(Path dirPath, Stream<Path> files) throws IOException {
-
-        for (Iterator<Path> iteratorFile = files.iterator(); iteratorFile.hasNext();) {
-            Path file = iteratorFile.next();
-            transferPendingFile(dirPath, file);
-        }
     }
 
     /**
@@ -241,20 +209,25 @@ public class SchedulerConfiguration implements SchedulingConfigurer {
      * @param file    the file
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    private void transferPendingFile(Path dirPath, Path file) throws IOException {
-        if (dirPath == null || file == null) {
-
-            throw new RuntimeException("Issue with dirpath: " + dirPath + " or file:" + file);
-        }
+    private void transferPendingFile(Path file) throws IOException {
 
         Path completedPath = Functions.getPath(Functions.FOLDER.done.name());
+        
+        Path tempDirPath = Functions.getPath(Functions.FOLDER.temp.name());
         try {
-            if (dirPath != null && Files.isRegularFile(file)) {
+            if (Files.isRegularFile(file)) {
 
-                Path dirName = dirPath.getFileName();
+                String[] dirAndFile = file.getFileName().toString().split(Functions.UNDERSCORE);
+
+                Path tempFilePath = Paths.get(tempDirPath.toAbsolutePath().toString(), dirAndFile[1]);
+
+
+                Files.copy(file, tempFilePath);
+
+                Path dirName = Paths.get(completedPath.toAbsolutePath().toString(), dirAndFile[0]);
                 String ftpLocation = sftpRemoteDirectory + "/" + dirName.toString();
 
-                gateway.upload(file.toFile(), ftpLocation);
+                gateway.upload(tempFilePath.toFile(), ftpLocation);
 
                 String absolutePath = completedPath.toAbsolutePath().toString();
                 Path destFolder = Paths.get(absolutePath, dirName.toString());
