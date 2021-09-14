@@ -76,11 +76,11 @@
 			<artifactId>spring-integration-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.cronutils</groupId>
-			<artifactId>cron-utils</artifactId>
-			<version>9.1.5</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>com.cronutils</groupId> -->
+<!-- 			<artifactId>cron-utils</artifactId> -->
+<!-- 			<version>9.1.5</version> -->
+<!-- 		</dependency> -->
 	</dependencies>
 
 	<build>
