@@ -48,6 +48,9 @@ interface Constants {
     /** The comma. */
     String COMMA = ",";
 
+    /** The common. */
+    String COMMON = "common";
+    
     /** The dot. */
     String DOT = ".";
 

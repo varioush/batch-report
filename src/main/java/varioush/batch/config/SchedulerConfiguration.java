@@ -126,7 +126,7 @@ public class SchedulerConfiguration implements SchedulingConfigurer {
                         LOG.warn("cannot execute reportJob");
                     }
                 }
-            }, functions.get(functions.get(subject, Functions.CRON)));
+            }, functions.get(subject, Functions.CRON));
 
             taskRegistrar.addCronTask(ct);
         }
@@ -192,12 +192,12 @@ public class SchedulerConfiguration implements SchedulingConfigurer {
         Path path = Functions.getPath(Functions.FOLDER.write.name());
 
         if (Files.isDirectory(path)) {
-            Stream<Path> files = Files.list(path);
-            for (Iterator<Path> iteratorFile = files.iterator(); iteratorFile.hasNext();) {
-                Path file = iteratorFile.next();
-                transferPendingFile(file);
+            try (Stream<Path> files = Files.list(path)) {
+                for (Iterator<Path> iteratorFile = files.iterator(); iteratorFile.hasNext();) {
+                    Path file = iteratorFile.next();
+                    transferPendingFile(file);
+                }
             }
-
         }
 
     }
@@ -212,7 +212,7 @@ public class SchedulerConfiguration implements SchedulingConfigurer {
     private void transferPendingFile(Path file) throws IOException {
 
         Path completedPath = Functions.getPath(Functions.FOLDER.done.name());
-        
+
         Path tempDirPath = Functions.getPath(Functions.FOLDER.temp.name());
         try {
             if (Files.isRegularFile(file)) {
@@ -221,15 +221,12 @@ public class SchedulerConfiguration implements SchedulingConfigurer {
 
                 Path tempFilePath = Paths.get(tempDirPath.toAbsolutePath().toString(), dirAndFile[1]);
 
-                
                 Files.copy(file, tempFilePath, StandardCopyOption.REPLACE_EXISTING);
 
                 String dirName = dirAndFile[0];
-             
+
                 String ftpLocation = sftpRemoteDirectory + "/" + dirName;
 
-                
-                
                 gateway.upload(tempFilePath.toFile(), ftpLocation);
 
                 String absolutePath = completedPath.toAbsolutePath().toString();

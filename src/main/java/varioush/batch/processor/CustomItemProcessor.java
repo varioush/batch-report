@@ -46,9 +46,9 @@ public class CustomItemProcessor implements ItemProcessor<Map<String, Object>, S
 
         String content = Functions.BLANK;
 
-        String delimterExpression = functions.get(subject, Functions.DELIMITER);
+        String delimiter = functions.get(subject, Functions.DELIMITER);
 
-        String delimiter = functions.get(delimterExpression);
+        
 
         if (prefix != null) {
             content = content.concat(prefix);

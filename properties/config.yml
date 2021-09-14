@@ -1,0 +1,37 @@
+common:
+    cron: "0 0/10 0 ? * *"
+    delimiter: '|~|'
+    footer: F|~|{N}
+    header: H|~|FDRPSL|~|{P%MMddyyyyhhmmss%}
+    postfix: X
+    prefix: FDRPSL
+business:
+    daily:
+        dir: '{P%MMMyyyyhhmmss}'
+        filename: RFR_BSNS_FDRPSL_{P%yyyyMMddhhmmss}.txt
+        orderBy: a.actor_id
+        query: select a.actor_id, a.first_name, a.last_name, f.title from actor a
+            inner join film_actor fa on fa.actor_id=a.actor_id inner join film f on
+            f.film_id=fa.film_id where a.first_name like '%Y%' and f.title like '%A%'
+    monthly:
+        cron: "35 15 0 1/1 * ?"
+        dir: Monthly_{P%yyyyhhmmss}
+        filename: RFR_BSNS_FDRPSL_{P%yyyyMMhhmmss}.txt
+        orderBy: actor_id
+        query: select actor_id, first_name, last_name from actor where first_name
+            like '%G%'
+principal:
+    daily:
+        dir: '{P%MMMyyyyhhmmss}'
+        filename: UPD_BSNS_FDRPSL_{P%yyyyMMddhhmmss}.txt
+        orderBy: actor_id
+        query: 'select actor_id, first_name, last_name from actor where first_name
+            like ''%F%'' '
+    monthly:
+        cron: "35 15 0 1/1 * ?"
+        filename: Monthly_{P%yyyyhhmmss}/UPD_BSNS_FDRPSL_{P%yyyyMMhhmmss}.txt
+        orderBy: actor_id
+        query: select actor_id, first_name, last_name from actor where first_name
+            like '%Y%'
+subject:
+    list: business.daily,principal.daily,business.monthly,principal.monthly

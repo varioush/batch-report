@@ -71,7 +71,14 @@ public class Functions implements Constants {
      */
     public String get(String subject, String label) {
 
-        return get(subject + Functions.DOT + label);
+        String value = get(subject + Functions.DOT + label);
+        
+        if(value==null )
+        {
+            value=get(COMMON+ Functions.DOT + label);
+        }
+        
+        return value;
     }
 
     /**
@@ -96,6 +103,7 @@ public class Functions implements Constants {
     public String get(String key) {
 
         return source.getProperty(key);
+        
     }
 
     /**

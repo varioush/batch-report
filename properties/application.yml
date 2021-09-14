@@ -1,0 +1,41 @@
+cronjob:
+    upload: "0 * * ? * *" 
+default:
+    task:
+        executor:
+            size: 10
+
+fetch:
+    size: 500
+logging:
+    level:
+        org: debug
+        com: debug
+server:
+    port: 12456
+sftp:
+    host: 127.0.0.1
+    password: shashi
+    port: 22
+    remote:
+        directory: dump
+    user: shashi
+spring:
+    batch:
+        datasource:
+            driver-class-name: org.hsqldb.jdbc.JDBCDriver
+            password: ''
+            url: jdbc:hsqldb:mem:batchdb
+            username: sa
+        initialize-schema: ALWAYS
+        job:
+            enabled: false
+    record:
+        datasource:
+            driver-class-name: com.mysql.cj.jdbc.Driver
+            password: system
+            url: jdbc:mysql://localhost:3306/sakila
+            username: root
+temp:
+    retain:
+        day: 40
